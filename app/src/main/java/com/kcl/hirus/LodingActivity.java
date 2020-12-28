@@ -11,7 +11,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 public class LodingActivity extends AppCompatActivity {
-    ImageView um;
+    ImageView iv;
     BitmapDrawable bitmap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,16 +19,16 @@ public class LodingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_loding);
         startLoding();
 
-        um = findViewById(R.id.UmLoding);
+        iv = findViewById(R.id.UmLoding);
 
         Resources res = getResources();
         bitmap = (BitmapDrawable)res.getDrawable(R.drawable.um);
         int bitmapWidth = bitmap.getIntrinsicWidth();
         int bitmapHeight = bitmap.getIntrinsicHeight();
 
-        um.setImageDrawable(bitmap);
-        um.getLayoutParams().width = bitmapWidth;
-        um.getLayoutParams().height = bitmapHeight;
+        iv.setImageDrawable(bitmap);
+        iv.getLayoutParams().width = bitmapWidth;
+        iv.getLayoutParams().height = bitmapHeight;
 
     }
 

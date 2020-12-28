@@ -47,8 +47,6 @@ public class AboutInfection extends Fragment implements MainActivity.OnBackpress
     String addressArr;
     TextView address;
     TextView City;
-    String infName;
-    String  Cityname;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

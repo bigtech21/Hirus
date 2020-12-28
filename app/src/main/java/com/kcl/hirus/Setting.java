@@ -113,7 +113,7 @@ public class Setting extends Fragment implements MainActivity.OnBackpressedListe
         }
 
         Nbuilder.setContentTitle("Hirus Notification");
-        Nbuilder.setContentText("UM IS STILL ALIVE");
+        Nbuilder.setContentText("Hirus");
         Nbuilder.setSmallIcon(android.R.drawable.ic_menu_view);
         Notification noti = Nbuilder.build();
 
@@ -141,8 +141,8 @@ public class Setting extends Fragment implements MainActivity.OnBackpressedListe
 
         Intent intent = new Intent(getActivity(), MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(), 101, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        Nbuilder.setContentTitle("엄준식2");
-        Nbuilder.setContentText("엄준식은 살아있다");
+        Nbuilder.setContentTitle("하이러스");
+        Nbuilder.setContentText("하이러스");
         Nbuilder.setSmallIcon(android.R.drawable.ic_menu_view);
         Nbuilder.setAutoCancel(true);
         Nbuilder.setContentIntent(pendingIntent);
