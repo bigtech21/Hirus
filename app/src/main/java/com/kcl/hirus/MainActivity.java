@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.DialogInterface;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private final static int PERMISSION_REQURST_CODE = 100;
     String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION};
     Double latitude, longitude;
+    Location location;
 
 
 
@@ -104,14 +106,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        gpsTracker = new GpsTracker(this);
 
         final TextView human1;
         final TextView human2;
@@ -125,16 +124,6 @@ public class MainActivity extends AppCompatActivity {
         animal2 = (TextView) findViewById(R.id.Animal2);
         animal3 = (TextView) findViewById(R.id.Animal3);
 
-        gpsTracker = new GpsTracker(this);
-        latitude = gpsTracker.getLatitude(); // 위도 경도 클래스변수에서 가져옴
-        Log.d("!!!!","위도 : "+latitude);
-        longitude = gpsTracker.getLongitude();
-        Log.d("!!!!","경도 : "+longitude);
-       toolbar_title= (TextView)findViewById(R.id.toolbar_title);
-        geocoder = new Geocoder(this);  // 역지오코딩 하기 위해
-
-        reverseCoding();
-
         int permissionCheck1 = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
         if(permissionCheck1 == PackageManager.PERMISSION_DENIED)
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.INTERNET},1);
@@ -147,55 +136,7 @@ public class MainActivity extends AppCompatActivity {
         if(permissionCheck3 == PackageManager.PERMISSION_DENIED)
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION},1);
 
-        final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-
-
-        LocationListener mLocationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                //여기서 위치값이 갱신되면 이벤트가 발생한다.
-                //값은 Location 형태로 리턴되며 좌표 출력 방법은 다음과 같다.
-
-                Log.d("test", "onLocationChanged, location:" + location);
-                //geoVariable.setLatitude(latitude); // 클래스 변수에 위도 대입
-               // geoVariable.setLongitube(longitude);  // 클래스 변수에 경도 대입
-            }
-
-            public void onProviderDisabled(String provider) {
-                // Disabled시
-                Log.d("test", "onProviderDisabled, provider:" + provider);
-            }
-
-            public void onProviderEnabled(String provider) {
-                // Enabled시
-                Log.d("test", "onProviderEnabled, provider:" + provider);
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-                // 변경시
-                Log.d("test", "onStatusChanged, provider:" + provider + ", status:" + status + " ,Bundle:" + extras);
-            }
-        };
-
-        try {
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, // 등록할 위치제공자
-                    100, // 통지사이의 최소 시간간격 (miliSecond)
-                    1, // 통지사이의 최소 변경거리 (m)
-                    mLocationListener);
-            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, // 등록할 위치제공자
-                    100, // 통지사이의 최소 시간간격 (miliSecond)
-                    1, // 통지사이의 최소 변경거리 (m)
-                    mLocationListener);
-        } catch(SecurityException e) {
-            e.printStackTrace();
-        }
-
-        final androidx.appcompat.widget.Toolbar toolbar = (androidx.appcompat.widget.Toolbar)findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
 
         mDrawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -253,12 +194,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        final Bundle bundle = new Bundle();
+        final Intent intent = getIntent();
 
         human1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                String text = human1.getText()+"";
+                Log.d("text",text);
+
                 TextView titles =findViewById(R.id.toolbar_title);
                 titles.setText(human1.getText() + "현황");
+
+                bundle.putString("text" , text);
+                ai.setArguments(bundle);
+
                 onFragmentChanged(R.id.AboutInfection_fr);
             }
         });
@@ -308,6 +259,65 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        latitude = gpsTracker.getLatitude(); // 위도 경도 클래스변수에서 가져옴
+        Log.d("!!!!","위도 : "+latitude);
+
+        longitude = gpsTracker.getLongitude();
+        Log.d("!!!!","경도 : "+longitude);
+        toolbar_title= (TextView)findViewById(R.id.toolbar_title);
+        geocoder = new Geocoder(this);  // 역지오코딩 하기 위해
+        reverseCoding();
+        final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        LocationListener mLocationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                //여기서 위치값이 갱신되면 이벤트가 발생한다.
+                //값은 Location 형태로 리턴되며 좌표 출력 방법은 다음과 같다.
+
+                Log.d("test", "onLocationChanged, location:" + location);
+                //geoVariable.setLatitude(latitude); // 클래스 변수에 위도 대입
+                // geoVariable.setLongitube(longitude);  // 클래스 변수에 경도 대입
+            }
+
+            public void onProviderDisabled(String provider) {
+                // Disabled시
+                Log.d("test", "onProviderDisabled, provider:" + provider);
+            }
+
+            public void onProviderEnabled(String provider) {
+                // Enabled시
+                Log.d("test", "onProviderEnabled, provider:" + provider);
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                // 변경시
+                Log.d("test", "onStatusChanged, provider:" + provider + ", status:" + status + " ,Bundle:" + extras);
+            }
+        };
+
+        try {
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, // 등록할 위치제공자
+                    100, // 통지사이의 최소 시간간격 (miliSecond)
+                    1, // 통지사이의 최소 변경거리 (m)
+                    mLocationListener);
+            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, // 등록할 위치제공자
+                    100, // 통지사이의 최소 시간간격 (miliSecond)
+                    1, // 통지사이의 최소 변경거리 (m)
+                    mLocationListener);
+        } catch(SecurityException e) {
+            e.printStackTrace();
+        }
+
+        final androidx.appcompat.widget.Toolbar toolbar = (androidx.appcompat.widget.Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
     }
 
     public void reverseCoding(){ // 위도 경도 넣어가지구 역지오코딩 주소값 뽑아낸다

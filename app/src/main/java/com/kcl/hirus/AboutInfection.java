@@ -47,17 +47,38 @@ public class AboutInfection extends Fragment implements MainActivity.OnBackpress
     String addressArr;
     TextView address;
     TextView City;
+    String desease;
+
+    int EVOLA = 1;
+    int MAVERG = 2;
+    int LASSA = 3;
+    int CCHF = 4;
+    int AHF = 5;
+    int RVF = 6;
+    int VV = 7;
+    int PEST = 8;
+    int ANTHRAX = 9;
+    int BOTULISM = 10;
+    int TULAREMIA = 11;
+    int ND = 12;
+    int SARS = 13;
+    int MERS = 14;
+    int PAI = 15;
+    int H1N1 = 16;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_about_infection, container, false);
 
-        //MainActivity activity = (MainActivity)getActivity();
         gpsTracker = new GpsTracker(getContext());
         geocoder = new Geocoder(getContext());
         latitude = gpsTracker.getLatitude();
         longitude = gpsTracker.getLongitude();
 
+        Bundle bundle = getArguments();
+        desease = bundle.getString("text");
 
 
         address = rootView.findViewById(R.id.Infested);
@@ -70,15 +91,12 @@ public class AboutInfection extends Fragment implements MainActivity.OnBackpress
 
         copyExcelDataToDatabase();
 
-
-
-
         return rootView;
     }
 
 
 
-    public void reverseCoding(){ // 위도 경도 넣어가지구 역지오코딩 주소값 뽑아낸다
+    public void reverseCoding(){
         List<Address> list = null;
         try {
             list = geocoder.getFromLocation(latitude, longitude, 10); // 위도, 경도, 얻어올 값의 개수
@@ -95,11 +113,8 @@ public class AboutInfection extends Fragment implements MainActivity.OnBackpress
                 String cut[] = list.get(0).toString().split(" ");
                 for(int i=0; i<cut.length; i++){
                     System.out.println("cut["+i+"] : " + cut[i]);
-                } // cut[0] : Address[addressLines=[0:"대한민국
-                // cut[1] : 서울특별시  cut[2] : 송파구  cut[3] : 오금동
-                // cut[4] : cut[4] : 41-26"],feature=41-26,admin=null ~~~~
-               // Cityname = cut[1];
-                addressArr = cut[1] + "의 감염병 현황";
+                }
+                addressArr = cut[1] + "의 "+ desease+" 현황";
             }
         }
     }
@@ -113,7 +128,6 @@ public class AboutInfection extends Fragment implements MainActivity.OnBackpress
         try {
             InputStream is = getContext().getResources().getAssets().open("database.xls");
             Workbook wb = Workbook.getWorkbook(is);
-
 
             Log.d("주소", address.getText().toString());
             addresses = address.getText().toString();//현주소
@@ -133,19 +147,22 @@ public class AboutInfection extends Fragment implements MainActivity.OnBackpress
                         for(int col=0;col<colTotal;col++) {
                             String contents = sheet.getCell(col, row).getContents();
                             sb.append("col"+col+" : "+contents+" , ");
-                            Log.d("셀", newaddress);
-                            if(newaddress.equals(contents)){
+                            Log.d("newaddress", newaddress);
 
-                                Cell iCnt = sheet.getCell(14, row);
-                                Cell iName = sheet.getCell(14, 0);
-                                Log.d("셀", newaddress);
-                                Log.d("셀", contents);
-                                Log.d("셀텍", (iCnt.getContents()));
-                                Log.d("셀이름", iName.getContents() + " : "+iCnt.getContents() + "명");
-                                String result = iName.getContents() + " : "+iCnt.getContents() + "명";
-                                //infName = iName.getContents();
+                            if(newaddress.equals(contents)){
+                                String deseaseName;
+
+
+
+                                Cell iCnt = sheet.getCell(18, row); //감염병 환자 수
+                                Cell iName = sheet.getCell(18, 0); //감염병 이름
+
+                                String result = "현재 감염된 "+iName.getContents() +"환자 수"+ " : "+iCnt.getContents() + "명";
+
+                                String infName = iName.getContents();
                                 City.setText(result);
                                 break;
+
                             }
                         }
                         Log.i("test", sb.toString());
@@ -175,5 +192,9 @@ public class AboutInfection extends Fragment implements MainActivity.OnBackpress
         Log.e("etc","onAttach()");
         ((MainActivity)context).setOnBackPressedListener(this);
     }
+
+    /*public void setDesease(String str) {
+       if
+    }*/
 }
 

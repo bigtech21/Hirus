@@ -38,7 +38,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:text="강원도 원주시"
+                    android:text="초기화 중입니다."
                     android:textColor="#000000"
                     android:textSize="21sp" />
 
@@ -55,7 +55,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginStart="0dp"
             android:layout_marginTop="59dp"
-            android:layout_marginEnd="208dp"
+            android:layout_marginEnd="204dp"
             android:layout_marginBottom="243dp"
             android:background="@drawable/edge_red">
 
@@ -84,7 +84,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="202dp"
+            android:layout_marginStart="204dp"
             android:layout_marginTop="59dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="243dp"
@@ -92,10 +92,9 @@
 
             <TextView
                 android:id="@+id/Animal1"
-                android:layout_width="199dp"
-                android:layout_height="412dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
 
                 android:gravity="center"
                 android:text="AFS\n(돼지열병)"
@@ -109,44 +108,51 @@
 
         <LinearLayout
             android:id="@+id/Animal2_3"
-            android:layout_width="208dp"
+            android:layout_width="204dp"
             android:layout_height="243dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginLeft="208dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="0dp"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/Animal2"
-                android:layout_width="36dp"
+                android:layout_width="102dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:background="@drawable/edge"
                 android:gravity="center"
                 android:text="AI\n(조류인플루엔자)" />
 
             <TextView
                 android:id="@+id/Animal3"
-                android:layout_width="wrap_content"
+                android:layout_width="102dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:background="@drawable/edge"
                 android:gravity="center"
                 android:text="FMDV\n(구제역)" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="202dp"
-            android:layout_height="241dp"
+            android:id="@+id/Human2_3"
+            android:layout_width="204dp"
+            android:layout_height="243dp"
+            android:layout_alignParentStart="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="2dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginRight="208dp"
+            android:layout_marginBottom="0dp"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/Human">
+            app:layout_constraintBottom_toTopOf="parent">
 
             <TextView
                 android:id="@+id/Human2"
-                android:layout_width="106dp"
+                android:layout_width="102dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/edge_orange"
                 android:gravity="center"
@@ -154,7 +160,7 @@
 
             <TextView
                 android:id="@+id/Human3"
-                android:layout_width="97dp"
+                android:layout_width="102dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/edge"
                 android:gravity="center"

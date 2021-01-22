@@ -34,15 +34,15 @@
         android:id="@+id/one"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="left"
         android:textColor="#000000"
-        android:textSize="20sp"/>
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/two"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="left"
         android:textColor="#000000"
         android:textSize="20sp"/>
 
@@ -50,7 +50,7 @@
         android:id="@+id/three"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="left"
         android:textColor="#000000"
         android:textSize="20sp"/>
 
@@ -58,7 +58,7 @@
         android:id="@+id/four"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="left"
         android:textColor="#000000"
         android:textSize="20sp"/>
 
@@ -66,7 +66,7 @@
         android:id="@+id/five"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="left"
         android:textColor="#000000"
         android:textSize="20sp"/>
 
@@ -74,7 +74,7 @@
         android:id="@+id/six"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="left"
         android:textColor="#000000"
         android:textSize="20sp"/>
 
@@ -82,7 +82,7 @@
         android:id="@+id/seven"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="left"
         android:textColor="#000000"
         android:textSize="20sp"/>
 
@@ -90,7 +90,7 @@
         android:id="@+id/eight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="left"
         android:textColor="#000000"
         android:textSize="20sp"/>
 
@@ -98,7 +98,7 @@
         android:id="@+id/nine"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="left"
         android:textColor="#000000"
         android:textSize="20sp"/>
 
@@ -106,7 +106,7 @@
         android:id="@+id/ten"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="left"
         android:textColor="#000000"
         android:textSize="20sp"/>
 

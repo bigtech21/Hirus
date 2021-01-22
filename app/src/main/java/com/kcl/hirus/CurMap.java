@@ -77,10 +77,7 @@ public class CurMap extends AppCompatActivity implements OnMapReadyCallback, Act
     private Location location;
     GeoVariable geoVariable;
 
-    LocationRequest locationRequest = new LocationRequest()
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-            .setInterval(UPDATE_INTERVAL_MS)
-            .setFastestInterval(FATEST_UPDATE_INTERVAL_MS);
+    LocationRequest locationRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,17 +190,16 @@ public class CurMap extends AppCompatActivity implements OnMapReadyCallback, Act
             super.onLocationResult(locationResult);
 
             List<Location> locationList = locationResult.getLocations();
-            GeoVariable geoVariable;
+
             if (locationList.size() > 0) {
                 location = locationList.get(locationList.size() - 1);
-                //location = locationList.get(0);
 
                 currentPosition
                         = new LatLng(location.getLatitude(), location.getLongitude());
 
                 curlatitude = location.getLatitude();
                 curlongitude = location.getLongitude();
-                //GeoVariable.setLatitude();
+
 
                 String markerTitle = getCurrentAddress(currentPosition);
                 String markerSnippet = "위도:" + String.valueOf(location.getLatitude())
