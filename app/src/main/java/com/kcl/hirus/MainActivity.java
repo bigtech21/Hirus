@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private final static int PERMISSION_REQURST_CODE = 100;
     String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION};
     Double latitude, longitude;
-    Location location;
+    Location location;;
 
 
 
