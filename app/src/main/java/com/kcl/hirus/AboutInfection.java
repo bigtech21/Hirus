@@ -65,7 +65,54 @@ public class AboutInfection extends Fragment implements MainActivity.OnBackpress
     int MERS = 14;
     int PAI = 15;
     int H1N1 = 16;
-
+    int DPT = 17;
+    int CKP = 18;
+    int MSL = 19; //홍역
+    int CHOLERA = 20;
+    int TYPHOID = 21;
+    int PTF = 22;
+    int SGLS = 23;
+    int EECI = 24;
+    int HEPATITIS_A = 25;
+    int WC = 26;
+    int EP = 27;
+    int RUBELLA = 28;
+    int C_RUBELLA = 29;
+    int A_RUBELLA = 30;
+    int POLIO = 31;
+    int NM = 32;
+    int HI_B = 33;
+    int PNEUMOCOCCOSIS = 34;
+    int LEPROSY = 35;
+    int SCARLET = 36;
+    int VRSA = 37;
+    int CRE = 38;
+    int HEPATITIS_E = 39;
+    int TETANUS = 40;
+    int HEPATITIS_B = 41;
+    int JE = 42;
+    int HEPATITIS_C = 43;
+    int MALARIA = 44;
+    int LEGIONELLOSIS = 45;
+    int VIBRIO = 46;
+    int TF = 47;
+    int R_TYPHI = 48;
+    int TST = 49;
+    int LEPTOSPIROSIS = 50;
+    int BRUCELLOSIS = 51;
+    int rabies = 52;
+    int HFWRS = 53;
+    int CJD = 54;
+    int YF = 55;
+    int DF = 56;
+    int QF = 57;
+    int WNF = 58;
+    int LD = 59;
+    int TBE = 60;
+    int MELIOIDOSIS = 61;
+    int CV = 62;
+    int SFTS = 63;
+    int ZV = 64;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -119,12 +166,34 @@ public class AboutInfection extends Fragment implements MainActivity.OnBackpress
         }
     }
 
+    private int selectDesease() {
+        try {
+            InputStream is = getContext().getResources().getAssets().open("database.xls");
+            Workbook wb = Workbook.getWorkbook(is);
+
+            if(wb != null){
+                Sheet sheet = wb.getSheet(0);
+
+                if(sheet != null){
+                    int colTotal = sheet.getColumns();    // 전체 컬럼
+                    for(int i = 1; i < colTotal; i++){
+                        String contents = sheet.getCell(i, 0).getContents();
+                        if(desease.equals(contents)){
+                            return i;
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){}
+        return 0;
+    }
+
     private void copyExcelDataToDatabase() {
 
         String addresses = null;
         String dataAddress = null;
         String newaddress = null;
-
+        int positionD = selectDesease();
         try {
             InputStream is = getContext().getResources().getAssets().open("database.xls");
             Workbook wb = Workbook.getWorkbook(is);
@@ -150,24 +219,17 @@ public class AboutInfection extends Fragment implements MainActivity.OnBackpress
                             Log.d("newaddress", newaddress);
 
                             if(newaddress.equals(contents)){
-                                String deseaseName;
-
-
-
-                                Cell iCnt = sheet.getCell(18, row); //감염병 환자 수
-                                Cell iName = sheet.getCell(18, 0); //감염병 이름
+                                Cell iCnt = sheet.getCell(positionD, row); //감염병 환자 수
+                                Cell iName = sheet.getCell(positionD, 0); //감염병 이름
 
                                 String result = "현재 감염된 "+iName.getContents() +"환자 수"+ " : "+iCnt.getContents() + "명";
 
                                 String infName = iName.getContents();
                                 City.setText(result);
                                 break;
-
                             }
                         }
-                        Log.i("test", sb.toString());
                     }
-
                 }
             }
         } catch (IOException e) {
@@ -192,9 +254,5 @@ public class AboutInfection extends Fragment implements MainActivity.OnBackpress
         Log.e("etc","onAttach()");
         ((MainActivity)context).setOnBackPressedListener(this);
     }
-
-    /*public void setDesease(String str) {
-       if
-    }*/
 }
 

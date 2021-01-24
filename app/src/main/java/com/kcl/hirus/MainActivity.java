@@ -120,9 +120,6 @@ public class MainActivity extends AppCompatActivity {
         human1 = (TextView) findViewById(R.id.BestDesease);
         human2 = (TextView) findViewById(R.id.Human2);
         human3 = (TextView) findViewById(R.id.Human3);
-        animal1 = (TextView) findViewById(R.id.Animal1);
-        animal2 = (TextView) findViewById(R.id.Animal2);
-        animal3 = (TextView) findViewById(R.id.Animal3);
 
         int permissionCheck1 = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
         if(permissionCheck1 == PackageManager.PERMISSION_DENIED)
@@ -217,8 +214,14 @@ public class MainActivity extends AppCompatActivity {
         human2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String text = human2.getText()+"";
+
                 TextView titles =findViewById(R.id.toolbar_title);
                 titles.setText(human2.getText() + "현황");
+
+                bundle.putString("text" , text);
+                ai.setArguments(bundle);
+
                 onFragmentChanged(R.id.AboutInfection_fr);
             }
         });
@@ -226,39 +229,17 @@ public class MainActivity extends AppCompatActivity {
         human3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String text = human3.getText()+"";
+
                 TextView titles =findViewById(R.id.toolbar_title);
                 titles.setText(human3.getText() + "현황");
+
+                bundle.putString("text" , text);
+                ai.setArguments(bundle);
+
                 onFragmentChanged(R.id.AboutInfection_fr);
             }
         });
-
-        animal1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                TextView titles =findViewById(R.id.toolbar_title);
-                titles.setText(animal1.getText() + "현황");
-                onFragmentChanged(R.id.AboutInfection_fr);
-            }
-        });
-
-        animal2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                TextView titles =findViewById(R.id.toolbar_title);
-                titles.setText(animal2.getText() + "현황");
-                onFragmentChanged(R.id.AboutInfection_fr);
-            }
-        });
-
-        animal3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                TextView titles =findViewById(R.id.toolbar_title);
-                titles.setText(animal3.getText() + "현황");
-                onFragmentChanged(R.id.AboutInfection_fr);
-            }
-        });
-
     }
 
     @Override
