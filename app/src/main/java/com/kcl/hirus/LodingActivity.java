@@ -19,7 +19,7 @@ public class LodingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_loding);
         startLoding();
 
-        iv = findViewById(R.id.UmLoding);
+        iv = findViewById(R.id.Loding);
 
         Resources res = getResources();
         bitmap = (BitmapDrawable)res.getDrawable(R.drawable.um);

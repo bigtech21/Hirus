@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 public class inf_search extends Fragment implements MainActivity.OnBackpressedListener{
     SearchView search;
-    Web web = new Web();
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -30,15 +30,12 @@ public class inf_search extends Fragment implements MainActivity.OnBackpressedLi
 
                 @Override
                 public boolean onQueryTextSubmit(String s) {
-                    String searchText = s;
-                    web.setUrlCode(s);
 
-                    FragmentManager fm = getFragmentManager();
-                    FragmentTransaction fragmentTransaction = fm.beginTransaction();
-                    fragmentTransaction.add(R.id.webAdd, web);
-                   // fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
-                    Log.d("Web", "추가");
+                        Web web = new Web();
+                        String searchText = s;
+                        web.setUrlCode(searchText);
+                        getFragmentManager().beginTransaction().replace(R.id.webAdd, web).commit();
+                        Log.d("Web", "추가");
 
                     return true;
                 }

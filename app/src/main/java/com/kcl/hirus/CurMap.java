@@ -47,14 +47,20 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
+
+import jxl.Cell;
+import jxl.Sheet;
+import jxl.Workbook;
 
 public class CurMap extends AppCompatActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private GoogleMap mMap;
 
     private Marker currentMarker = null;
+    private Marker newMarker = null;
     private FusedLocationProviderClient mFusedLocationClient;
 
     private static final String TAG = "현재위치";
@@ -65,6 +71,12 @@ public class CurMap extends AppCompatActivity implements OnMapReadyCallback, Act
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     boolean needRequest = false;
 
+    private long doubleClickTime;
+    int arr[] = new int[66];
+    int bestDesease;
+    String bestDeseaseName;
+    String[] deseases = new String[66];
+
     public static double curlatitude = 0;
     public static double curlongitude = 0;
 
@@ -72,6 +84,7 @@ public class CurMap extends AppCompatActivity implements OnMapReadyCallback, Act
 
     Location mCurrentLocatiion;
     LatLng currentPosition;
+    LatLng selectedPosition;
 
     private View mLayout;
     private Location location;
@@ -91,10 +104,14 @@ public class CurMap extends AppCompatActivity implements OnMapReadyCallback, Act
 
         mLayout = findViewById(R.id.layout_main);
 
+        for(int i = 0; i < arr.length; i++){ //초기화
+            arr[i] = 0;
+        }
+
         locationRequest = new LocationRequest()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(UPDATE_INTERVAL_MS)
-                .setFastestInterval(FATEST_UPDATE_INTERVAL_MS);
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                //.setInterval(UPDATE_INTERVAL_MS)
+                //.setFastestInterval(FATEST_UPDATE_INTERVAL_MS);
 
 
         LocationSettingsRequest.Builder builder =
@@ -179,9 +196,75 @@ public class CurMap extends AppCompatActivity implements OnMapReadyCallback, Act
             @Override
             public void onMapClick(LatLng latLng) {
 
+
+               String str =  getCurrentAddress(latLng);
+               String address[] = str.split(" ");
+
+               getExcelData(address[1], address[2]);
+
+                String markerTitle = address[1]+" " + address[2] + "의 감염병 현황";
+                String markerSnippet = bestDeseaseName+" : "+bestDesease+""; //arr63 = 제일많은거
+
+
+                addNewMarker(latLng, markerTitle, markerSnippet);
                 Log.d( TAG, "onMapClick :");
             }
         });
+    }
+
+    //row 증가 = 세로로, col증가 = 가로로
+    public void getExcelData(String addr, String si) {
+        try {
+            String str_do = addr.substring(0,2);
+            String str_si = si.substring(0,2);
+            Log.d("되니","되니");
+            InputStream is = getBaseContext().getResources().getAssets().open("database.xls");
+            Workbook wb = Workbook.getWorkbook(is);
+            int key, k, l;
+            int addressPosition = 0;
+            if(wb != null){
+                Sheet sheet = wb.getSheet(0);
+                if(sheet != null){
+                    int rowTotal = sheet.getRows();
+                    int colTotal = sheet.getColumns(); // 전체 컬럼
+
+                    for(int i = 1; i < rowTotal; i++){
+                        String contents = sheet.getCell(0, i).getContents();
+                        Log.d(str_do+" "+str_si,contents);
+                        if(str_do.equals(contents) || str_si.equals(contents)){//도 혹은 시/군을 찾을 경우
+                            addressPosition = i;
+                            break;
+                        }
+                    }
+
+                    for(int j = 1; j < colTotal; j++){
+                        Cell iCnt = sheet.getCell(j, addressPosition); //감염병 환자 수
+                        Cell DName = sheet.getCell(j, 0); //감염병 이름
+                        arr[j-1] = Integer.parseInt(iCnt.getContents());
+                        deseases[j-1] = DName.getContents();
+                        Log.d("de",deseases[j-1]);
+                    }
+
+                    for(k = 1; k< arr.length; k++) { //삽입 정렬
+                        key = arr[k];
+                        for(l = k-1; l>=0 && arr[l]>key; l--) {
+                            arr[l + 1] = arr[l];
+                        }
+                        arr[l+1] = key;
+                        Log.d("test","되니?");
+                    }
+                    bestDesease = arr[65];
+                    for(int i = 1; i < colTotal; i++){
+                        Cell iCnt = sheet.getCell(i, addressPosition);
+                        if(bestDesease == Integer.parseInt(iCnt.getContents())){
+                            Cell D = sheet.getCell(i, 0);
+                            bestDeseaseName = D.getContents();
+                        }
+                    }
+
+                }
+            }
+        }catch (Exception e){e.printStackTrace();}
     }
 
     LocationCallback locationCallback = new LocationCallback() {
@@ -354,6 +437,25 @@ public class CurMap extends AppCompatActivity implements OnMapReadyCallback, Act
         currentMarker = mMap.addMarker(markerOptions);
 
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentLatLng);
+        mMap.moveCamera(cameraUpdate);
+
+    }
+
+    public void addNewMarker(LatLng latLng, String markerTitle, String markerSnippet) {
+
+
+        if (newMarker != null) newMarker.remove();
+
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title(markerTitle);
+        markerOptions.snippet(markerSnippet);
+        markerOptions.draggable(true);
+
+
+        newMarker = mMap.addMarker(markerOptions);
+
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(latLng);
         mMap.moveCamera(cameraUpdate);
 
     }
