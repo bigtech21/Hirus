@@ -33,12 +33,12 @@
                 android:id="@+id/BestDesease"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_weight="1"
                 android:fontFamily="sans-serif"
                 android:gravity="center"
-                android:text="수두"
+                android:text="오류"
                 android:textColor="#000000"
                 android:textSize="30sp"
-                android:layout_weight = "1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -99,7 +99,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/edge_orange"
                 android:gravity="center"
-                android:text="중증열성혈소판감소증후군(SFTS)" />
+                android:text="오류" />
 
             <TextView
                 android:id="@+id/Human3"
@@ -108,7 +108,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/edge"
                 android:gravity="center"
-                android:text="중동호흡기증후군(MERS)" />
+                android:text="오류" />
         </LinearLayout>
 
     </RelativeLayout>

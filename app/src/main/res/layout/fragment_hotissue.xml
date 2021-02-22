@@ -34,6 +34,7 @@
         android:id="@+id/one"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="true"
         android:gravity="left"
         android:textColor="#000000"
         android:textSize="20sp" />
@@ -44,7 +45,8 @@
         android:layout_height="wrap_content"
         android:gravity="left"
         android:textColor="#000000"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:clickable="true"/>
 
     <TextView
         android:id="@+id/three"
@@ -52,7 +54,8 @@
         android:layout_height="wrap_content"
         android:gravity="left"
         android:textColor="#000000"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:clickable="true"/>
 
     <TextView
         android:id="@+id/four"
@@ -60,7 +63,8 @@
         android:layout_height="wrap_content"
         android:gravity="left"
         android:textColor="#000000"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:clickable="true"/>
 
     <TextView
         android:id="@+id/five"
@@ -68,7 +72,8 @@
         android:layout_height="wrap_content"
         android:gravity="left"
         android:textColor="#000000"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:clickable="true"/>
 
     <TextView
         android:id="@+id/six"
@@ -76,7 +81,8 @@
         android:layout_height="wrap_content"
         android:gravity="left"
         android:textColor="#000000"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:clickable="true"/>
 
     <TextView
         android:id="@+id/seven"
@@ -84,7 +90,8 @@
         android:layout_height="wrap_content"
         android:gravity="left"
         android:textColor="#000000"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:clickable="true"/>
 
     <TextView
         android:id="@+id/eight"
@@ -92,7 +99,8 @@
         android:layout_height="wrap_content"
         android:gravity="left"
         android:textColor="#000000"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:clickable="true"/>
 
     <TextView
         android:id="@+id/nine"
@@ -100,7 +108,8 @@
         android:layout_height="wrap_content"
         android:gravity="left"
         android:textColor="#000000"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:clickable="true"/>
 
     <TextView
         android:id="@+id/ten"
@@ -108,6 +117,7 @@
         android:layout_height="wrap_content"
         android:gravity="left"
         android:textColor="#000000"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:clickable="true"/>
 
 </LinearLayout>

@@ -72,10 +72,14 @@ public class CurMap extends AppCompatActivity implements OnMapReadyCallback, Act
     boolean needRequest = false;
 
     private long doubleClickTime;
-    int arr[] = new int[66];
+    int arr[] = new int[67];
     int bestDesease;
+    int secondDesease;
+    int thirdDesease;
     String bestDeseaseName;
-    String[] deseases = new String[66];
+    String secondDeseaseName;
+    String thirdDeseaseName;
+    String[] deseases = new String[67];
 
     public static double curlatitude = 0;
     public static double curlongitude = 0;
@@ -92,6 +96,15 @@ public class CurMap extends AppCompatActivity implements OnMapReadyCallback, Act
 
     LocationRequest locationRequest;
 
+    public void arrinit() {
+        for(int i = 0; i < arr.length; i++){ //초기화
+            arr[i] = 0;
+        }
+        for(int i = 0; i < deseases.length; i++){ //초기화
+            deseases[i] = "";
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,9 +117,7 @@ public class CurMap extends AppCompatActivity implements OnMapReadyCallback, Act
 
         mLayout = findViewById(R.id.layout_main);
 
-        for(int i = 0; i < arr.length; i++){ //초기화
-            arr[i] = 0;
-        }
+
 
         locationRequest = new LocationRequest()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -196,14 +207,13 @@ public class CurMap extends AppCompatActivity implements OnMapReadyCallback, Act
             @Override
             public void onMapClick(LatLng latLng) {
 
-
                String str =  getCurrentAddress(latLng);
                String address[] = str.split(" ");
 
                getExcelData(address[1], address[2]);
 
                 String markerTitle = address[1]+" " + address[2] + "의 감염병 현황";
-                String markerSnippet = bestDeseaseName+" : "+bestDesease+""; //arr63 = 제일많은거
+                String markerSnippet = bestDeseaseName+" : "+bestDesease+" "+ secondDeseaseName+" : "+secondDesease+" "+ thirdDeseaseName+" : "+thirdDesease+"";
 
 
                 addNewMarker(latLng, markerTitle, markerSnippet);
@@ -215,7 +225,16 @@ public class CurMap extends AppCompatActivity implements OnMapReadyCallback, Act
     //row 증가 = 세로로, col증가 = 가로로
     public void getExcelData(String addr, String si) {
         try {
-            String str_do = addr.substring(0,2);
+            String str_do;
+            arrinit();
+            Log.d("길이는?",addr.length()+"");
+            if(addr.length() > 3) { //충청북도 ~~
+
+                str_do = addr.substring(0,4);
+            }
+            else { //강원도 ~~ 서울 ~~
+                str_do = addr.substring(0, 2);
+            }
             String str_si = si.substring(0,2);
             Log.d("되니","되니");
             InputStream is = getBaseContext().getResources().getAssets().open("database.xls");
@@ -253,13 +272,25 @@ public class CurMap extends AppCompatActivity implements OnMapReadyCallback, Act
                         arr[l+1] = key;
                         Log.d("test","되니?");
                     }
-                    bestDesease = arr[65];
+                    bestDesease = arr[arr.length-1];
+                    secondDesease = arr[arr.length-2];
+                    thirdDesease = arr[arr.length-3];
+
                     for(int i = 1; i < colTotal; i++){
                         Cell iCnt = sheet.getCell(i, addressPosition);
                         if(bestDesease == Integer.parseInt(iCnt.getContents())){
                             Cell D = sheet.getCell(i, 0);
                             bestDeseaseName = D.getContents();
                         }
+                        if(secondDesease == Integer.parseInt(iCnt.getContents())){
+                            Cell D = sheet.getCell(i, 0);
+                            secondDeseaseName = D.getContents();
+                        }
+                        if(thirdDesease == Integer.parseInt(iCnt.getContents())){
+                            Cell D = sheet.getCell(i, 0);
+                            thirdDeseaseName = D.getContents();
+                        }
+
                     }
 
                 }

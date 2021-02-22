@@ -37,8 +37,13 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
+
+import jxl.Cell;
+import jxl.Sheet;
+import jxl.Workbook;
 
 import static com.kcl.hirus.GeoVariable.latitude;
 import static com.kcl.hirus.GeoVariable.longitube;
@@ -61,6 +66,19 @@ public class MainActivity extends AppCompatActivity {
     String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION};
     Double latitude, longitude;
     Location location;;
+    String[] deseases = new String[67];
+    int arr[] = new int[67];
+    int bestDesease;
+    int secondDesease;
+    int thirdDesease;
+    String bestDeseaseName;
+    String secondDeseaseName;
+    String thirdDeseaseName;
+    String do_ = null;
+    String si = null;
+    TextView human1;
+    TextView human2;
+    TextView human3;
 
 
 
@@ -106,20 +124,101 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    public void getExcelData(String addr, String si) {
+        try {
+            String str_do;
+            //배열 초기화
+            for(int i = 0; i < deseases.length ; i++){
+                deseases[i] = "";
+            }
+            if(addr.length() > 3) { //충청북도 ~~
+
+                str_do = addr.substring(0,4);
+            }
+            else { //강원도 ~~ 서울 ~~
+                str_do = addr.substring(0, 2);
+            }
+            String str_si = si.substring(0,2);
+
+            InputStream is = getBaseContext().getResources().getAssets().open("database.xls");
+            Workbook wb = Workbook.getWorkbook(is);
+            int key, k, l;
+            int addressPosition = 0;
+            if(wb != null){
+                Sheet sheet = wb.getSheet(0);
+                if(sheet != null){
+                    int rowTotal = sheet.getRows();
+                    int colTotal = sheet.getColumns(); // 전체 컬럼
+
+                    for(int i = 1; i < rowTotal; i++){
+                        String contents = sheet.getCell(0, i).getContents();
+                        Log.d(str_do+" "+str_si,contents);
+                        if(str_do.equals(contents) || str_si.equals(contents)){//도 혹은 시/군을 찾을 경우
+                            addressPosition = i;
+                            break;
+                        }
+                    }
+
+                    for(int j = 1; j < colTotal; j++){
+                        Cell iCnt = sheet.getCell(j, addressPosition); //감염병 환자 수
+                        Cell DName = sheet.getCell(j, 0); //감염병 이름
+                        arr[j-1] = Integer.parseInt(iCnt.getContents());
+                        deseases[j-1] = DName.getContents();
+                        Log.d("de",deseases[j-1]);
+                    }
+
+                    for(k = 1; k< arr.length; k++) { //삽입 정렬
+                        key = arr[k];
+                        for(l = k-1; l>=0 && arr[l]>key; l--) {
+                            arr[l + 1] = arr[l];
+                        }
+                        arr[l+1] = key;
+                        Log.d("test","되니?");
+                    }
+                    bestDesease = arr[arr.length-1];
+                    secondDesease = arr[arr.length-2];
+                    thirdDesease = arr[arr.length-3];
+
+                    for(int i = 1; i < colTotal; i++){
+                        Cell iCnt = sheet.getCell(i, addressPosition);
+                        if(bestDesease == Integer.parseInt(iCnt.getContents())){
+                            Cell D = sheet.getCell(i, 0);
+                            bestDeseaseName = D.getContents();
+                        }
+                        if(secondDesease == Integer.parseInt(iCnt.getContents())){
+                            Cell D = sheet.getCell(i, 0);
+                            secondDeseaseName = D.getContents();
+                        }
+                        if(thirdDesease == Integer.parseInt(iCnt.getContents())){
+                            Cell D = sheet.getCell(i, 0);
+                            thirdDeseaseName = D.getContents();
+                        }
+
+                    }
+
+                }
+            }
+        }catch (Exception e){e.printStackTrace();}
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        gpsTracker = new GpsTracker(this);
 
-        final TextView human1;
-        final TextView human2;
-        final TextView human3;
-        final TextView animal1, animal2, animal3;
+       /* //백그라운드 서비스 실행
+        Intent serviceIntent = new Intent(getApplicationContext(),BackgroundService.class);
+        startService(serviceIntent);*/
+
+
+        gpsTracker = new GpsTracker(this);
 
         human1 = (TextView) findViewById(R.id.BestDesease);
         human2 = (TextView) findViewById(R.id.Human2);
         human3 = (TextView) findViewById(R.id.Human3);
+
+
 
         int permissionCheck1 = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
         if(permissionCheck1 == PackageManager.PERMISSION_DENIED)
@@ -253,6 +352,12 @@ public class MainActivity extends AppCompatActivity {
         toolbar_title= (TextView)findViewById(R.id.toolbar_title);
         geocoder = new Geocoder(this);  // 역지오코딩 하기 위해
         reverseCoding();
+
+        getExcelData(do_, si);
+        human1.setText(bestDeseaseName);
+        human2.setText(secondDeseaseName);
+        human3.setText(thirdDeseaseName);
+
         final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         LocationListener mLocationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
@@ -260,8 +365,8 @@ public class MainActivity extends AppCompatActivity {
                 //값은 Location 형태로 리턴되며 좌표 출력 방법은 다음과 같다.
 
                 Log.d("test", "onLocationChanged, location:" + location);
-                //geoVariable.setLatitude(latitude); // 클래스 변수에 위도 대입
-                // geoVariable.setLongitube(longitude);  // 클래스 변수에 경도 대입
+
+
             }
 
             public void onProviderDisabled(String provider) {
@@ -325,6 +430,8 @@ public class MainActivity extends AppCompatActivity {
                 // cut[4] : cut[4] : 41-26"],feature=41-26,admin=null ~~~~
                 toolbar_title.setText(cut[1] + " " + cut[2] + " " + cut[3]); // 내가 원하는 구의 값을 뽑아내 출력
                 addressArr = cut[1] + " " + cut[2] + " " + cut[3];
+                do_ = cut[1];
+                si = cut[2];
             }
         }
     }

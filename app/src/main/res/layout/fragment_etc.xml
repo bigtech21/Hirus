@@ -21,6 +21,6 @@
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=" \n제작 : ?조\n \n강선구 \n안상기 \n이주광 \n오유민 \n\n버전정보 \n v0.0"
+        android:text=" \n제작 : 6조\n \n강선구 \n안상기 \n이주광 \n오유민 \n\n버전정보 \n v0.0"
         android:textColor="#000000" />
 </LinearLayout>

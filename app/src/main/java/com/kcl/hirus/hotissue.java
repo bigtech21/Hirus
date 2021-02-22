@@ -43,6 +43,8 @@ public class hotissue extends Fragment implements MainActivity.OnBackpressedList
         issueses[9] = rootView.findViewById(R.id.ten);
         Blank = rootView.findViewById(R.id.blank);
         Blank.setText("");
+
+
         getWebsite();
 
         return rootView;
