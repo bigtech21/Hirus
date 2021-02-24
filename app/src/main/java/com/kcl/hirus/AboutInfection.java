@@ -245,6 +245,7 @@ public class AboutInfection extends Fragment implements MainActivity.OnBackpress
         activity.setOnBackPressedListener(null);
 
         getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right).remove(this).commit();
+        activity.fragmentOn = false;
         activity.toolbar_title.setText(activity.addressArr);
     }
 

@@ -47,6 +47,7 @@ import jxl.Workbook;
 
 import static com.kcl.hirus.GeoVariable.latitude;
 import static com.kcl.hirus.GeoVariable.longitube;
+import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
     TextView human1;
     TextView human2;
     TextView human3;
+    boolean fragmentOn = false;
 
 
 
@@ -96,6 +98,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void setOnBackPressedListener(OnBackpressedListener listener){
         mBackListener = listener;
+    }
+
+    public void arrinit() {
+        for(int i = 0; i < arr.length; i++){ //초기화
+            arr[i] = 0;
+        }
+        for(int i = 0; i < deseases.length; i++){ //초기화
+            deseases[i] = "";
+        }
     }
 
     @Override
@@ -128,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
     public void getExcelData(String addr, String si) {
         try {
             String str_do;
+            arrinit();
             //배열 초기화
             for(int i = 0; i < deseases.length ; i++){
                 deseases[i] = "";
@@ -344,6 +356,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("!!!!","Resume");
         latitude = gpsTracker.getLatitude(); // 위도 경도 클래스변수에서 가져옴
         Log.d("!!!!","위도 : "+latitude);
 
@@ -363,7 +376,13 @@ public class MainActivity extends AppCompatActivity {
             public void onLocationChanged(Location location) {
                 //여기서 위치값이 갱신되면 이벤트가 발생한다.
                 //값은 Location 형태로 리턴되며 좌표 출력 방법은 다음과 같다.
-
+                if(fragmentOn == false) {
+                    reverseCoding();
+                }
+                getExcelData(do_, si);
+                human1.setText(bestDeseaseName);
+                human2.setText(secondDeseaseName);
+                human3.setText(thirdDeseaseName);
                 Log.d("test", "onLocationChanged, location:" + location);
 
 
@@ -424,7 +443,7 @@ public class MainActivity extends AppCompatActivity {
                 // 문자열을 자르자!
                 String cut[] = list.get(0).toString().split(" ");
                 for(int i=0; i<cut.length; i++){
-                    System.out.println("cut["+i+"] : " + cut[i]);
+                   // System.out.println("cut["+i+"] : " + cut[i]);
                 } // cut[0] : Address[addressLines=[0:"대한민국
                 // cut[1] : 서울특별시  cut[2] : 송파구  cut[3] : 오금동
                 // cut[4] : cut[4] : 41-26"],feature=41-26,admin=null ~~~~
@@ -463,6 +482,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else if(id == R.id.AboutInfection_fr){
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right).replace(R.id.container, ai).commit();
+            fragmentOn = true;
         }
     }
     @Override
@@ -483,4 +503,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return super. onOptionsItemSelected(item);
     }
+
+
 }
