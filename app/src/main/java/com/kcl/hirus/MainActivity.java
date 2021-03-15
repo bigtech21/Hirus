@@ -1,18 +1,12 @@
 package com.kcl.hirus;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.AnimationDrawable;
 import android.location.Geocoder;
 import android.location.Address;
 import android.location.LocationListener;
@@ -23,8 +17,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,21 +24,11 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.Locale;
 
-import jxl.Cell;
-import jxl.Sheet;
-import jxl.Workbook;
-
-import static com.kcl.hirus.GeoVariable.latitude;
-import static com.kcl.hirus.GeoVariable.longitube;
 import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity {
@@ -59,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     WorldMap wm = new WorldMap();
     Setting st = new Setting();
     Etc etc = new Etc();
+    nonFragment non = new nonFragment();
     AboutInfection ai = new AboutInfection();
     private long pressedTime = 0;
     private GpsTracker gpsTracker;
@@ -66,27 +49,19 @@ public class MainActivity extends AppCompatActivity {
     private final static int PERMISSION_REQURST_CODE = 100;
     String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION};
     Double latitude, longitude;
-    Location location;;
-    String[] deseases = new String[67];
-    int arr[] = new int[67];
-    int bestDesease;
-    int secondDesease;
-    int thirdDesease;
-    String bestDeseaseName;
-    String secondDeseaseName;
-    String thirdDeseaseName;
     String do_ = null;
     String si = null;
     TextView human1;
     TextView human2;
     TextView human3;
     boolean fragmentOn = false;
+    TabLayout tabLayout;
 
 
 
 
     Geocoder geocoder;
-    public static TextView toolbar_title;
+    public TextView toolbar_title;
     public static String addressArr = null;
 
 
@@ -98,15 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void setOnBackPressedListener(OnBackpressedListener listener){
         mBackListener = listener;
-    }
-
-    public void arrinit() {
-        for(int i = 0; i < arr.length; i++){ //초기화
-            arr[i] = 0;
-        }
-        for(int i = 0; i < deseases.length; i++){ //초기화
-            deseases[i] = "";
-        }
     }
 
     @Override
@@ -136,83 +102,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void getExcelData(String addr, String si) {
-        try {
-            String str_do;
-            arrinit();
-            //배열 초기화
-            for(int i = 0; i < deseases.length ; i++){
-                deseases[i] = "";
-            }
-            if(addr.length() > 3) { //충청북도 ~~
-
-                str_do = addr.substring(0,4);
-            }
-            else { //강원도 ~~ 서울 ~~
-                str_do = addr.substring(0, 2);
-            }
-            String str_si = si.substring(0,2);
-
-            InputStream is = getBaseContext().getResources().getAssets().open("database.xls");
-            Workbook wb = Workbook.getWorkbook(is);
-            int key, k, l;
-            int addressPosition = 0;
-            if(wb != null){
-                Sheet sheet = wb.getSheet(0);
-                if(sheet != null){
-                    int rowTotal = sheet.getRows();
-                    int colTotal = sheet.getColumns(); // 전체 컬럼
-
-                    for(int i = 1; i < rowTotal; i++){
-                        String contents = sheet.getCell(0, i).getContents();
-                        Log.d(str_do+" "+str_si,contents);
-                        if(str_do.equals(contents) || str_si.equals(contents)){//도 혹은 시/군을 찾을 경우
-                            addressPosition = i;
-                            break;
-                        }
-                    }
-
-                    for(int j = 1; j < colTotal; j++){
-                        Cell iCnt = sheet.getCell(j, addressPosition); //감염병 환자 수
-                        Cell DName = sheet.getCell(j, 0); //감염병 이름
-                        arr[j-1] = Integer.parseInt(iCnt.getContents());
-                        deseases[j-1] = DName.getContents();
-                        Log.d("de",deseases[j-1]);
-                    }
-
-                    for(k = 1; k< arr.length; k++) { //삽입 정렬
-                        key = arr[k];
-                        for(l = k-1; l>=0 && arr[l]>key; l--) {
-                            arr[l + 1] = arr[l];
-                        }
-                        arr[l+1] = key;
-                        Log.d("test","되니?");
-                    }
-                    bestDesease = arr[arr.length-1];
-                    secondDesease = arr[arr.length-2];
-                    thirdDesease = arr[arr.length-3];
-
-                    for(int i = 1; i < colTotal; i++){
-                        Cell iCnt = sheet.getCell(i, addressPosition);
-                        if(bestDesease == Integer.parseInt(iCnt.getContents())){
-                            Cell D = sheet.getCell(i, 0);
-                            bestDeseaseName = D.getContents();
-                        }
-                        if(secondDesease == Integer.parseInt(iCnt.getContents())){
-                            Cell D = sheet.getCell(i, 0);
-                            secondDeseaseName = D.getContents();
-                        }
-                        if(thirdDesease == Integer.parseInt(iCnt.getContents())){
-                            Cell D = sheet.getCell(i, 0);
-                            thirdDeseaseName = D.getContents();
-                        }
-
-                    }
-
-                }
-            }
-        }catch (Exception e){e.printStackTrace();}
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -244,63 +133,14 @@ public class MainActivity extends AppCompatActivity {
         if(permissionCheck3 == PackageManager.PERMISSION_DENIED)
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION},1);
 
-
-
-
-        mDrawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                item.setChecked(true);
-                mDrawLayout.closeDrawers();
-
-                int id = item.getItemId();
-                String title = item.getTitle().toString();
-
-                if (id == R.id.inf_search) {
-                    Toast.makeText(context, title + ":질병 정보 검색", Toast.LENGTH_SHORT).show();
-                    TextView titles =findViewById(R.id.toolbar_title);
-                    titles.setText(title);
-                    onFragmentChanged(id);
-
-                } else if (id == R.id.hotissue) {
-                    Toast.makeText(context, title + ":핫 이슈", Toast.LENGTH_SHORT).show();
-                    TextView titles =findViewById(R.id.toolbar_title);
-                    titles.setText(title);
-                    onFragmentChanged(id);
-
-                } else if (id == R.id.minigame) {
-                    Toast.makeText(context, title + ":미니게임", Toast.LENGTH_SHORT).show();
-                    TextView titles =findViewById(R.id.toolbar_title);
-                    titles.setText(title);
-                    onFragmentChanged(id);
-
-                } else if (id == R.id.map) {
-                    Toast.makeText(context, title + ":해외 현황", Toast.LENGTH_SHORT).show();
-                    TextView titles =findViewById(R.id.toolbar_title);
-                    titles.setText(title);
-                    onFragmentChanged(id);
-
-                } else if (id == R.id.setting) {
-                    Toast.makeText(context, title + ":환경설정", Toast.LENGTH_SHORT).show();
-                    TextView titles =findViewById(R.id.toolbar_title);
-                    titles.setText(title);
-                    onFragmentChanged(id);
-
-                } else if (id == R.id.etc) {
-                    Toast.makeText(context, title + ":기타사항 문의", Toast.LENGTH_SHORT).show();
-                    TextView titles =findViewById(R.id.toolbar_title);
-                    titles.setText(title);
-                    onFragmentChanged(id);
-                }
-
-                return true;
-            }
-        });
-
+        tabLayout = findViewById(R.id.tabLayout);
+        tabLayout.getTabAt(0).setIcon(R.drawable.home_icon);
+        tabLayout.getTabAt(1).setIcon(R.drawable.search_icon);
+        tabLayout.getTabAt(2).setIcon(R.drawable.issue_icon);
+        tabLayout.getTabAt(3).setIcon(R.drawable.game_icon);
+        tabLayout.getTabAt(4).setIcon(R.drawable.world_icon);
+        tabLayout.getTabAt(5).setIcon(R.drawable.setting_icon);
+        tabLayout.getTabAt(6).setIcon(R.drawable.etc_icon);
 
         final Bundle bundle = new Bundle();
         final Intent intent = getIntent();
@@ -366,10 +206,68 @@ public class MainActivity extends AppCompatActivity {
         geocoder = new Geocoder(this);  // 역지오코딩 하기 위해
         reverseCoding();
 
-        getExcelData(do_, si);
-        human1.setText(bestDeseaseName);
-        human2.setText(secondDeseaseName);
-        human3.setText(thirdDeseaseName);
+        Excel.getExcelData(do_, si);
+        human1.setText(Excel.bestDeseaseName);
+        human2.setText(Excel.secondDeseaseName);
+        human3.setText(Excel.thirdDeseaseName);
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+
+                int id = tab.getPosition();
+                Log.d("id", id+"");
+                Fragment selected = null;
+
+                if(id == 0) {
+                    TextView titles =findViewById(R.id.toolbar_title);
+                    titles.setText(addressArr);
+                    selected = non;
+                }
+                else if(id == 1) {
+                    TextView titles =findViewById(R.id.toolbar_title);
+                    titles.setText("질병 정보 검색");
+                    selected = is;
+                }
+                else if(id == 2){
+                    TextView titles =findViewById(R.id.toolbar_title);
+                    titles.setText("핫 이슈");
+                    selected = hi;
+                }
+                else if(id == 3){
+                    TextView titles =findViewById(R.id.toolbar_title);
+                    titles.setText("미니게임");
+                    selected = mg;
+                }
+                else if(id == 4){
+                    TextView titles =findViewById(R.id.toolbar_title);
+                    titles.setText("해외현황");
+                    selected = wm;
+                }
+                else if(id == 5){
+                    TextView titles =findViewById(R.id.toolbar_title);
+                    titles.setText("설정");
+                    selected = st;
+                }
+                else if(id == 6){
+                    TextView titles =findViewById(R.id.toolbar_title);
+                    titles.setText("기타");
+                    selected = etc;
+                }
+                getSupportFragmentManager().beginTransaction().replace(R.id.layout, selected).commit();
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         LocationListener mLocationListener = new LocationListener() {
@@ -379,10 +277,10 @@ public class MainActivity extends AppCompatActivity {
                 if(fragmentOn == false) {
                     reverseCoding();
                 }
-                getExcelData(do_, si);
-                human1.setText(bestDeseaseName);
-                human2.setText(secondDeseaseName);
-                human3.setText(thirdDeseaseName);
+                Excel.getExcelData(do_, si);
+                human1.setText(Excel.bestDeseaseName);
+                human2.setText(Excel.secondDeseaseName);
+                human3.setText(Excel.thirdDeseaseName);
                 Log.d("test", "onLocationChanged, location:" + location);
 
 
@@ -462,37 +360,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onFragmentChanged(int id){
-        if(id == R.id.inf_search){
-            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right).replace(R.id.container, is).commit();
+        Fragment lastFragment = non;
+        if(id == 0){
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, non).commit();
         }
-        else if (id == R.id.hotissue){
-            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right).replace(R.id.container, hi).commit();
+        else if(id ==R.id.inf_search_fr){
+            lastFragment = is;
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, is).commit();
         }
-        else if( id == R.id.minigame){
-            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right).replace(R.id.container, mg).commit();
+        else if (id == 2){
+            lastFragment = hi;
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, hi).commit();
         }
-        else if(id == R.id.map) {
-            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right).replace(R.id.container, wm).commit();
+        else if( id == 3){
+            lastFragment = mg;
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, mg).commit();
         }
-        else if(id == R.id.setting){
-            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right).replace(R.id.container, st).commit();
+        else if(id == 4) {
+            lastFragment = wm;
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, wm).commit();
         }
-        else if(id == R.id.etc){
-            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right).replace(R.id.container, etc).commit();
+        else if(id == 5){
+            lastFragment = st;
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, st).commit();
+        }
+        else if(id == 6){
+            lastFragment = etc;
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, etc).commit();
         }
         else if(id == R.id.AboutInfection_fr){
-            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right).replace(R.id.container, ai).commit();
+            lastFragment = ai;
+            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right).replace(R.id.layout, ai).commit();
             fragmentOn = true;
         }
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
-            case android.R.id.home:{
-                mDrawLayout.openDrawer(GravityCompat.START);
-                break;
-            }
-
             case R.id.map_open: {
 
                 Intent intent = new Intent(getApplicationContext(),CurMap.class);

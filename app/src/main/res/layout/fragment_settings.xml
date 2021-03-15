@@ -9,14 +9,6 @@
     tools:context=".Setting"
     android:clickable="true">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme" />
-
     <Switch
         android:id="@+id/sound_vibe"
         android:layout_width="match_parent"

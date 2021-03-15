@@ -1,132 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:id = "@+id/drawer_layout">
+    tools:context=".MainActivity">
 
-    <RelativeLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight = "3">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/Human"
-            android:layout_width="match_parent"
-            android:layout_height="393dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="258dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/tabLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <TextView
+            android:id="@+id/Human3"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+
+            android:background="@drawable/edge"
+            android:gravity="center"
+            android:text="오류"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/Human2"
+            app:layout_constraintTop_toBottomOf="@id/BestDesease"/>
+
+        <TextView
+            android:id="@+id/Human2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+
+            android:background="@drawable/edge_orange"
+            android:gravity="center"
+
+            android:text="오류"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/Human3"
+            app:layout_constraintTop_toBottomOf="@id/BestDesease"/>
+
+        <TextView
+            android:id="@+id/BestDesease"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:background="@drawable/edge_red"
-            android:foregroundGravity="top"
-            android:layout_weight = "2">
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:text="오류"
+            android:textColor="#000000"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toTopOf="@id/Human2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/BestDesease"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:fontFamily="sans-serif"
-                android:gravity="center"
-                android:text="오류"
-                android:textColor="#000000"
-                android:textSize="30sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout"
+        app:layout_constraintVertical_bias="0.0">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/inf_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-            <View
-                android:id="@+id/view_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_below="@+id/toolbar"
-                android:background="@android:color/black" />
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/hotissue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#A47DB5"
-                app:popupTheme="@style/AppTheme.PopupOverlay">
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/minigame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-                <TextView
-                    android:id="@+id/toolbar_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:text="초기화 중입니다."
-                    android:textColor="#000000"
-                    android:textSize="21sp" />
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/worldMap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-            </androidx.appcompat.widget.Toolbar>
-        </com.google.android.material.appbar.AppBarLayout>
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-        <LinearLayout
-            android:id="@+id/human2_3"
-            android:layout_width="match_parent"
-            android:layout_height="258dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:foregroundGravity="bottom"
-            android:gravity="bottom"
-            android:orientation="horizontal"
-            android:layout_weight = "1">
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/etct"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.tabs.TabLayout>
 
-            <TextView
-                android:id="@+id/Human2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/edge_orange"
-                android:gravity="center"
-                android:text="오류" />
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/layout"/>
 
-            <TextView
-                android:id="@+id/Human3"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/edge"
-                android:gravity="center"
-                android:text="오류" />
-        </LinearLayout>
-
-    </RelativeLayout>
-
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_view"
+    <TextView
+        android:id="@+id/toolbar_title"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/navi_header"
-        app:menu="@menu/main_navigationmenu" >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"></LinearLayout>
-    </com.google.android.material.navigation.NavigationView>
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+        app:layout_constraintEnd_toEndOf="@+id/toolbar"
+        app:layout_constraintStart_toStartOf="@+id/toolbar"
+        app:layout_constraintTop_toTopOf="@id/toolbar" />
 
 
-</androidx.drawerlayout.widget.DrawerLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

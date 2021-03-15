@@ -23,6 +23,7 @@ public class inf_search extends Fragment implements MainActivity.OnBackpressedLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d("test","created");
         final View rootView = inflater.inflate(R.layout.fragment_inf_search, container, false);
         search = rootView.findViewById(R.id.searchView);
         try {

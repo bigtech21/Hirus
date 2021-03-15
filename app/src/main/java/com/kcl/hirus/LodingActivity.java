@@ -13,11 +13,13 @@ import android.widget.ImageView;
 public class LodingActivity extends AppCompatActivity {
     ImageView iv;
     BitmapDrawable bitmap;
+    Excel excel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loding);
         startLoding();
+        ExcelInit();
 
         iv = findViewById(R.id.Loding);
 
@@ -43,5 +45,9 @@ public class LodingActivity extends AppCompatActivity {
                 finish();
             }
         }, 2000);
+    }
+
+    private void ExcelInit() {
+        excel = new Excel(getBaseContext());
     }
 }
