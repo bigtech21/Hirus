@@ -9,8 +9,10 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:allowBackup="true"
@@ -24,8 +26,16 @@
 
             ></activity>
 
+        <receiver
+            android:name="com.kcl.hirus.BootReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:label="BOOTReceiver">
 
-
+                <intent-filter>
+                    <action android:name = "android.intent.action.BOOT_COMPLETED"/>
+                </intent-filter>
+            </receiver>
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -53,12 +63,27 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".BackgroundService">
+        <service
+            android:name=".BackgroundService"
+            android:enabled="true"
+            android:stopWithTask="false">
             <intent-filter>
-                <action android:name="com.kcl.hirus.background_position_send"/>
+                <action android:name="com.kcl.hirus.BackgroundService"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </service>
+
+        <receiver
+            android:name="com.kcl.hirus.RestarterBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="RestartServiceWhenStopped">
+
+            <intent-filter>
+                <action android:name = "com.kcl.hirus.RestartService"/>
+            </intent-filter>
+        </receiver>
+
 
     </application>
 

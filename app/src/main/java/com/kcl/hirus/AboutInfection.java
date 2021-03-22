@@ -72,7 +72,7 @@ public class AboutInfection extends Fragment implements MainActivity.OnBackpress
         City = rootView.findViewById(R.id.city);
 
         City.setText(Excel.copyExcelDataToDatabase(address, desease));
-
+        Log.d("d",address.toString());
         return rootView;
     }
 
@@ -96,7 +96,7 @@ public class AboutInfection extends Fragment implements MainActivity.OnBackpress
                 for(int i=0; i<cut.length; i++){
                     System.out.println("cut["+i+"] : " + cut[i]);
                 }
-                addressArr = cut[1] + "의 "+ desease+" 현황";
+                addressArr = cut[2] +" "+cut[3]+" "+ desease+" 현황";
             }
         }
     }

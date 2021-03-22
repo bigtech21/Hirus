@@ -2,288 +2,188 @@ package com.kcl.hirus;
 
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.Binder;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 
-public class BackgroundService extends Service implements LocationListener {
-    private String TAG = "Service";
-    private String sPackageName = "com.kcl.hirus";
+import java.util.Timer;
+import java.util.TimerTask;
 
-    private final IBinder mBinder = new LocalBinder();
-    int iLoopValue = 0;
+public class BackgroundService extends Service{
+   private final static String TAG = BackgroundService.class.getSimpleName();
 
-    int iThreadInterval = 25000;
-    boolean bThreadGo = true;
+   private Context context = null;
+   public int counter = 0;
+   String beforeStr = null;
+   String afterStr = null;
+    String text = null;
 
-    LocationManager locationManager;
-    String sBestGpsProvider = "";
+   public BackgroundService(){}
+
+   public BackgroundService(Context applicationContext){
+       super();
+       context = applicationContext;
+   }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return mBinder;
+        return null;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d("service", "oncreate");
+        //최초 한번만 호출
+        Log.d(TAG, "BackgroundService.onCreate");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            final String strId ="0" ;
+            final String strTitle = getString(R.string.app_name);
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel channel = notificationManager.getNotificationChannel(strId);
+            if (channel == null) {
+                channel = new NotificationChannel(strId, strTitle, NotificationManager.IMPORTANCE_HIGH);
+                notificationManager.createNotificationChannel(channel);
+            }
+
+            Notification notification = new NotificationCompat.Builder(this, strId).build();
+            startForeground(1, notification);
+        }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("service", "start");
-        super.onStartCommand(intent, flags, startId);
-
-        bThreadGo = true;
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        sBestGpsProvider = LocationManager.GPS_PROVIDER;
-
-        setGpsPosition(); //기기에 가지고 있는 마지막 위치정보로 현재위치를 초기설정
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return START_NOT_STICKY;
-        }
-        locationManager.requestLocationUpdates(sBestGpsProvider, 10000, 0, this);
-        setGpsPosition(); //기기에 가지고 있는 마지막 위치정보로 현재위치를 초기설정
-
-        new Thread(mRun).start();
-        return super.onStartCommand(intent, flags, startId);
+        Log.d(TAG, "BackgroundService.onStartCommand");
+       super.onStartCommand(intent, flags, startId);
+        startTimer();
+        return START_STICKY;
     }
-
 
     @Override
     public void onDestroy() {
-       /* try {
-            Log.d(TAG, "DESTROY");
-            bThreadGo = false;
 
-            if (this != null && locationManager != null) {
-                locationManager.removeUpdates(this);
-            }
-
-            TAG = null;
-            locationManager = null;
-            mRun = null;
-        } catch (Exception e) {
-
-        }*/
-        super.onDestroy();
+        //종료될때 실행
+        Log.d(TAG, "BackgroundService.onDestroy");
+        Intent broadcastIntent = new Intent("com.kcl.hirus.RestartService");
+        sendBroadcast(broadcastIntent);
+        stopTimerTask();
     }
 
-    public void onLocationChanged(Location location) {
-        try {
-            Log.d(TAG, "위치변경");
+    private Timer timer;
+    private TimerTask timerTask;
+    long oldTime=0;
+    public void startTimer() {
+        timer = new Timer();
 
-            positionSaveProc();
-        } catch (Exception e) {
-        }
+        initializerTimerTask();
+
+        timer.schedule(timerTask, 3, 10000);
     }
 
-
-    public class LocalBinder extends Binder {
-        BackgroundService getService() {
-            return BackgroundService.this;
-        }
-    }
-
-    public interface ICallback {
-        ;
-    }
-
-    private ICallback mCallback;
-
-    public void registerCallback(ICallback cb) {
-        mCallback = cb;
-    }
-
-    Runnable mRun = new Runnable() {
-        public void run() {
-            try {
-                while (bThreadGo) {
-                    Log.i(TAG, ">mRun");
-
-                    iLoopValue++;
-                    Thread.sleep(iThreadInterval);
-                    if (iLoopValue > 100000)
-                        iLoopValue = 0;
-
-                    // 위치를 저장
-                    positionSaveProc();
+    public void initializerTimerTask() {
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                afterStr = MainActivity.addressstr;
+                if(beforeStr == null){
+                    beforeStr = afterStr;
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
 
-
-    public synchronized void positionSaveProc() {
-        try {
-            Log.i(TAG, ">positionSaveProc : 변경된 위치 저장");
-
-            double dLatitude = 0;
-            double dLongitude = 0;
-            if (sBestGpsProvider != null && locationManager != null) {
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    return;
+                if(afterStr !=null) {
+                    String arr[] = afterStr.split(" ");
+                    Excel.getExcelData(arr[1], arr[2]);
+                  //  text = afterStr + "의 감염병 현황입니다.\r" + Excel.bestDeseaseName + "\r" + Excel.secondDeseaseName + "\r" + Excel.thirdDeseaseName;
                 }
-                Location lcPosition = locationManager.getLastKnownLocation(sBestGpsProvider);
-                if (lcPosition != null) {
-                    dLatitude = lcPosition.getLatitude();
-                    dLongitude = lcPosition.getLongitude();
-                    Log.i(TAG, ">positionSaveProc : lat(" + dLatitude + "), lot(" + dLongitude + ")");
-                    if (dLatitude != 0 && dLongitude != 0) {
-                        setSharePreferenceFloatValue("dUserContactLatitude", (float) dLatitude);
-                        setSharePreferenceFloatValue("dUserContactLongitude", (float) dLongitude);
 
-                        setLocationProvider("GPS");        //값을 가져오니 위성으로 설정
-                    } else {
-                        setLocationProvider("NETWORK");    //실내이어서 위성으로 못가져올 가능성이 커서 네트워크로 설정
-                    }
-                } else {
-                    Log.i(TAG, ">positionSaveProc : 널이어서 위치값이 없는 경우");
-                    setLocationProvider("NETWORK");        //실내이어서 위성으로 못가져올 가능성이 커서 네트워크로 설정
+
+               if(beforeStr == afterStr){
+                    NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+
+                    Intent notificationIntent = new Intent(getApplicationContext(), LodingActivity.class);
+                    notificationIntent.putExtra("notificationId", 0); //전달할 값
+                    notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK) ;
+                    PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,  PendingIntent.FLAG_UPDATE_CURRENT);
+
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "1")
+                            .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_foreground)) //BitMap 이미지 요구
+                            .setContentTitle("해당 지역의 감염병 정보입니다.")
+                           // .setContentText(text)
+                            // 더 많은 내용이라서 일부만 보여줘야 하는 경우 아래 주석을 제거하면 setContentText에 있는 문자열 대신 아래 문자열을 보여줌
+                            //.setStyle(new NotificationCompat.BigTextStyle().bigText("더 많은 내용을 보여줘야 하는 경우..."))
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                            .setContentIntent(pendingIntent) // 사용자가 노티피케이션을 탭시 ResultActivity로 이동하도록 설정
+                            .setAutoCancel(true);
+
+                    NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle(builder);
+                   // inboxStyle.addLine(afterStr + "의 감염병 현황입니다.");
+                   inboxStyle.addLine(Excel.bestDeseaseName);
+                   inboxStyle.addLine(Excel.secondDeseaseName);
+                   inboxStyle.addLine(Excel.thirdDeseaseName);
+
+                    //OREO API 26 이상에서는 채널 필요
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+                        builder.setSmallIcon(R.drawable.ic_launcher_foreground); //mipmap 사용시 Oreo 이상에서 시스템 UI 에러남
+                        CharSequence channelName  = "해당 지역의 감염병 정보입니다.";
+                        String description = "테스트1";
+                        int importance = NotificationManager.IMPORTANCE_HIGH;
+
+                        NotificationChannel channel = new NotificationChannel("1", channelName , importance);
+                        channel.setDescription(description);
+
+                        // 노티피케이션 채널을 시스템에 등록
+                        assert notificationManager != null;
+                        notificationManager.createNotificationChannel(channel);
+
+                    }else builder.setSmallIcon(R.mipmap.ic_launcher); // Oreo 이하에서 mipmap 사용하지 않으면 Couldn't create icon: StatusBarIcon 에러남
+
+                    assert notificationManager != null;
+                    notificationManager.notify(1234, builder.build()); // 고유숫자로 노티피케이션 동작시킴
                 }
+
+                beforeStr = afterStr;
+                afterStr = null;
+
             }
-        } catch (Exception e) {
-            Log.i(TAG, ">positionSaveProc : " + e.toString());
+        };
+    }
+
+    public void stopTimerTask(){
+        if(timer != null){
+            timer.cancel();
+            timer = null;
         }
     }
 
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
 
-    public synchronized void setLocationProvider(String parmOption) {
-        if (locationManager == null)
-            return;
-        if (parmOption.equals("NETWORK")) {
-            Log.i(TAG, ">setLocationProvider sBestGpsProvider : " + sBestGpsProvider);
-            setGpsPosition(); // 기기에 가지고 있는 마지막 위치정보로 현재위치를 초기 설정
-            sBestGpsProvider = LocationManager.NETWORK_PROVIDER; // 강제로 네트워크로 지정
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            locationManager.requestLocationUpdates(sBestGpsProvider, 10000, 0, this);// 10초마다체크(1000),0미터,리스너위치
-            setGpsPosition(); // 기기에 가지고 있는 마지막 위치정보로 현재위치를 초기 설정
-        } else if (parmOption.equals("GPS")) {
-            Log.i(TAG, ">setLocationProvider sBestGpsProvider : " + sBestGpsProvider);
-            sBestGpsProvider = LocationManager.GPS_PROVIDER; // 강제로 위성으로 지정
-            locationManager.requestLocationUpdates(sBestGpsProvider, 10000, 0, this);// 10초마다체크(1000),0미터,리스너위치
-        }
+        Intent intent = new Intent(getApplicationContext(), BackgroundService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 1, intent, PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime()+5000, pendingIntent);
+        Log.d(TAG, "BackgroundService.onTaskRemoved");
+        super.onTaskRemoved(rootIntent);
     }
-
-    public synchronized void setGpsPosition() {
-        try {
-            Log.i(TAG, ">setGpsPosition : 위치 셋팅");
-            if (locationManager == null)
-                return;
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            Location lcPosition = locationManager.getLastKnownLocation(sBestGpsProvider);
-            if (lcPosition != null) {
-                Log.i(TAG, ">setGpsPosition : lat(" + lcPosition.getLatitude() + "), lot(" + lcPosition.getLongitude() + ")");
-                setSharePreferenceFloatValue("dUserContactLatitude", (float) lcPosition.getLatitude());
-                setSharePreferenceFloatValue("dUserContactLongitude",(float) lcPosition.getLongitude());
-            } else {
-                Log.i(TAG, ">setGpsPosition : 널이어서 위치값이 없는 경우");
-            }
-        } catch (Exception e) {
-            Log.i(TAG, ">setGpsPosition : error : " + e.toString());
-        }
-    }
-
-    public synchronized void locationChangedProc(Location location) {
-        try {
-            Log.i(TAG, ">locationChangedProc : 위치가 변경되었을 경우");
-            if (location == null) {
-                return;
-            }
-            double lat = location.getLatitude();
-            double lon = location.getLongitude();
-            if (lat > 1 && lon > 1) {
-                setSharePreferenceFloatValue("dUserContactLatitude", (float) lat);
-                setSharePreferenceFloatValue("dUserContactLongitude", (float) lon);
-                Log.i(TAG, ">locationChangedProc : 위도 : " + lat);
-                Log.i(TAG, ">locationChangedProc : 경도 : " + lon);
-
-                // 서비스에서 액티비티로 데이터를 보내는 부분
-            } else {
-                Log.i(TAG, ">locationChangedProc : gps 오류 : " + lon);
-            }
-        } catch (Exception e) {
-            Log.i(TAG, ">locationChangedProc : " + e.toString());
-        }
-    }
-
-    public synchronized void setSharePreferenceStringValue(String parmName,
-                                                           String parmValue) {
-        try {
-            SharedPreferences spSvc = getApplicationContext()
-                    .getSharedPreferences(sPackageName, MODE_PRIVATE);
-            SharedPreferences.Editor ed = spSvc.edit();
-            ed.putString(parmName, parmValue);
-            ed.commit();
-            spSvc = null;
-        } catch (Exception e) {
-            Log.i(TAG, ">setSharePreferenceStringValue error : " + e.toString());
-        }
-    }
-
-    public synchronized String getSharePreferenceStringValue(String parmName) {
-        try {
-            SharedPreferences spSvc = getApplicationContext()
-                    .getSharedPreferences(sPackageName, MODE_PRIVATE);
-            String sReturn = spSvc.getString(parmName, "");
-            spSvc = null;
-            return sReturn;
-        } catch (Exception e) {
-            Log.i(TAG, ">getSharePreferenceStringValue error : " + e.toString());
-            return "";
-        }
-    }
-
-    public synchronized void setSharePreferenceFloatValue(String parmName,
-                                                          float parmValue) {
-        try {
-            SharedPreferences spSvc = getApplicationContext()
-                    .getSharedPreferences(sPackageName, MODE_PRIVATE);
-            SharedPreferences.Editor ed = spSvc.edit();
-            ed.putFloat(parmName, parmValue);
-            ed.commit();
-            spSvc = null;
-        } catch (Exception e) {
-            Log.i(TAG, ">setSharePreferenceStringValue error : " + e.toString());
-        }
-    }
-
-    public synchronized float getSharePreferenceFloatValue(String parmName) {
-        try {
-            SharedPreferences spSvc = getApplicationContext()
-                    .getSharedPreferences(sPackageName, MODE_PRIVATE);
-            float sReturn = spSvc.getFloat(parmName, 0);
-            spSvc = null;
-            return sReturn;
-        } catch (Exception e) {
-            Log.i(TAG, ">getSharePreferenceStringValue error : " + e.toString());
-            return 0;
-        }
-    }
-
 }

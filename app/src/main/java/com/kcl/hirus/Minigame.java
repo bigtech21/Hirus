@@ -60,8 +60,8 @@ public class Minigame extends Fragment implements MainActivity.OnBackpressedList
         Log.e("etc","onBack()");
         MainActivity activity = (MainActivity)getActivity();
         activity.setOnBackPressedListener(null);
-
-        getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right).remove(this).commit();
+        activity.tabLayout.getTabAt(0).select();
+        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
         activity.toolbar_title.setText(activity.addressArr);
     }
 

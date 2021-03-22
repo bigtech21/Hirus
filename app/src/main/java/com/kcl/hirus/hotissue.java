@@ -26,6 +26,7 @@ import java.io.IOException;
 public class hotissue extends Fragment implements MainActivity.OnBackpressedListener{
     TextView issueTitle,Blank;
     TextView[] issueses = new TextView[10];
+    String[] keyWords = new String[10];
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -41,13 +42,71 @@ public class hotissue extends Fragment implements MainActivity.OnBackpressedList
         issueses[7] = rootView.findViewById(R.id.eight);
         issueses[8] = rootView.findViewById(R.id.nine);
         issueses[9] = rootView.findViewById(R.id.ten);
+
+        int i = 0;
+
         Blank = rootView.findViewById(R.id.blank);
         Blank.setText("");
 
 
         getWebsite();
 
+        for(i = 0; i<10; i++) {
+            issueses[i].setClickable(true);
+            issueses[i].setOnClickListener(new Mylistener());
+        }
         return rootView;
+    }
+
+
+    class Mylistener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            String urlcode = "a20101000000";
+            if(v.getId() == R.id.one){
+                keyWords[0] = issueses[0].getText().toString();
+                urlcode = keyWords[0].substring(2);
+            }
+            else if(v.getId() == R.id.two){
+                keyWords[1] = issueses[1].getText().toString();
+                urlcode = keyWords[1].substring(2);
+            }
+            else if(v.getId() == R.id.three){
+                keyWords[2] = issueses[2].getText().toString();
+                urlcode = keyWords[2].substring(2);
+            }
+            else if(v.getId() == R.id.four){
+                keyWords[3] = issueses[3].getText().toString();
+                urlcode = keyWords[3].substring(2);
+            }
+            else if(v.getId() == R.id.five){
+                keyWords[4] = issueses[4].getText().toString();
+                urlcode = keyWords[4].substring(2);
+            }
+            else if(v.getId() == R.id.six){
+                keyWords[5] = issueses[5].getText().toString();
+                urlcode = keyWords[5].substring(2);
+            }
+            else if(v.getId() == R.id.seven){
+                keyWords[6] = issueses[6].getText().toString();
+                urlcode = keyWords[6].substring(2);
+            }
+            else if(v.getId() == R.id.eight){
+                keyWords[7] = issueses[7].getText().toString();
+                urlcode = keyWords[7].substring(2);
+            }
+            else if(v.getId() == R.id.nine){
+                keyWords[8] = issueses[8].getText().toString();
+                urlcode = keyWords[8].substring(2);
+            }
+            else if(v.getId() == R.id.ten){
+                keyWords[9] = issueses[9].getText().toString();
+                urlcode = keyWords[9].substring(2);
+            }
+            Web web = new Web();
+            web.setUrlCode(urlcode);
+            getFragmentManager().beginTransaction().replace(R.id.layout, web).addToBackStack(null).commit();
+        }
     }
 
     private void getWebsite() {
@@ -88,10 +147,11 @@ public class hotissue extends Fragment implements MainActivity.OnBackpressedList
     @Override
     public void onBack() {
         Log.e("etc","onBack()");
+
         MainActivity activity = (MainActivity)getActivity();
         activity.setOnBackPressedListener(null);
-
-        getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right).remove(this).commit();
+        activity.tabLayout.getTabAt(0).select();
+        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
         activity.toolbar_title.setText(activity.addressArr);
     }
 
@@ -101,4 +161,5 @@ public class hotissue extends Fragment implements MainActivity.OnBackpressedList
         Log.e("etc","onAttach()");
         ((MainActivity)context).setOnBackPressedListener(this);
     }
+
 }

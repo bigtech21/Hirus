@@ -108,7 +108,8 @@ public class WorldMap extends Fragment implements MainActivity.OnBackpressedList
         */
         for(int i = 0; i < countriesID.length; i++){
             countries[i] = rootview.findViewById(countriesID[i]);
-            countries[i].setOnTouchListener(countryTouchListener);
+            countries[i].setClickable(true);
+            countries[i].setOnClickListener(countryTouchListener);
             if(confirmedVector.get(i) > 0 && confirmedVector.get(i) <= 100000){ //확진자 1명 이상 10만명 이하
                 countries[i].setColorFilter(Color.parseColor("#4DFF0000"),PorterDuff.Mode.SRC_ATOP); // 빨강색, 투명도 30%
             }
@@ -170,8 +171,8 @@ public class WorldMap extends Fragment implements MainActivity.OnBackpressedList
         Log.e("etc","onBack()");
         MainActivity activity = (MainActivity)getActivity();
         activity.setOnBackPressedListener(null);
-
-        getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right).remove(this).commit();
+        activity.tabLayout.getTabAt(0).select();
+        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
         activity.toolbar_title.setText(activity.addressArr);
     }
 
@@ -184,14 +185,10 @@ public class WorldMap extends Fragment implements MainActivity.OnBackpressedList
 
 
 
-    class CountryTouchListener implements View.OnTouchListener {
+    class CountryTouchListener implements View.OnClickListener {
         @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_MOVE:
-                case MotionEvent.ACTION_DOWN: {
-                    touch = true;
-                    Log.d("event","down");
+        public void onClick(View v) {
+
                     switch (v.getId()) {
                         case R.id.CA:
                             nstr = nstr.concat(nameVector.get(contriesCnt[0]) + "\n확진자 수 : " + confirmedVector.get(contriesCnt[0]) + "명\n\n");
@@ -676,11 +673,6 @@ public class WorldMap extends Fragment implements MainActivity.OnBackpressedList
                         ad[dialogcnt-1].dismiss();
                     }
                         ad[dialogcnt].show();
-                        break;
-
-                }
-            }
-            return false;
 
         }
     }

@@ -57,22 +57,14 @@ public class Excel {
         }
     }
 
-    public static void getExcelData(String addr, String si) {
+    public static void getExcelData(String addr, String sii) {
         try {
-            String str_do;
+            String si = sii;
             arrinit();
             //배열 초기화
             for(int i = 0; i < deseases.length ; i++){
                 deseases[i] = "";
             }
-            if(addr.length() > 3) { //충청북도 ~~
-
-                str_do = addr.substring(0,4);
-            }
-            else { //강원도 ~~ 서울 ~~
-                str_do = addr.substring(0, 2);
-            }
-            String str_si = si.substring(0,2);
 
             int key, k, l;
             int addressPosition = 0;
@@ -83,12 +75,14 @@ public class Excel {
                     int colTotal = sheet.getColumns(); // 전체 컬럼
 
                     for(int i = 1; i < rowTotal; i++){
-                        String contents = sheet.getCell(0, i).getContents();
-                        Log.d(str_do+" "+str_si,contents);
-                        if(str_do.equals(contents) || str_si.equals(contents)){//도 혹은 시/군을 찾을 경우
+                        String contents = sheet.getCell(0, i).getContents().replaceAll("\\P{Print}","").trim();
+                        /*데이터 양이 많아지니 유니코드 문제로 equls가 false나옴, replace구문으로 해결, 유니코드 문자 제거하는 구문*/
+
+                        if(addr.contains(contents)||si.contains(contents)){//구를 찾을 경우
                             addressPosition = i;
                             break;
                         }
+                        System.gc();
                     }
 
                     for(int j = 1; j < colTotal; j++){
@@ -96,7 +90,6 @@ public class Excel {
                         Cell DName = sheet.getCell(j, 0); //감염병 이름
                         arr[j-1] = Integer.parseInt(iCnt.getContents());
                         deseases[j-1] = DName.getContents();
-                        Log.d("excel",deseases[j-1]);
                     }
 
                     for(k = 1; k< arr.length; k++) { //삽입 정렬
@@ -105,7 +98,6 @@ public class Excel {
                             arr[l + 1] = arr[l];
                         }
                         arr[l+1] = key;
-                        Log.d("test","Excel");
                     }
                     bestDesease = arr[arr.length-1];
                     secondDesease = arr[arr.length-2];
@@ -159,14 +151,17 @@ public class Excel {
 
         String addresses = null;
         String dataAddress = null;
-        String newaddress = null;
+        String newaddress[] = null;
         int positionD = selectDesease(desease);
-        Log.d("newaddress", positionD+"");
+
         try {
 
             Log.d("주소", address.getText().toString());
             addresses = address.getText().toString();//현주소
-            newaddress = addresses.substring(0, 2);//현주소자른
+            newaddress = addresses.split(" ");//현주소자른, 0 = ~시, 1 = ~구,동
+            String str1 = newaddress[0].replaceAll("\\P{Print}","");
+            String str2 = newaddress[1].replaceAll("\\P{Print}","");
+
 
             if(wb != null) {
                 Sheet sheet = wb.getSheet(0);   // 시트 불러오기
@@ -180,14 +175,19 @@ public class Excel {
                     for(int row=rowIndexStart;row<rowTotal;row++) {
                         sb = new StringBuilder();
                         for(int col=0;col<colTotal;col++) {
-                            String contents = sheet.getCell(col, row).getContents();
+                            String contents = sheet.getCell(0, row).getContents().replaceAll("\\P{Print}","");
                             sb.append("col"+col+" : "+contents+" , ");
 
-
-                            if(newaddress.equals(contents)){
+                            if(contents.contains(str2)){
                                 Cell iCnt = sheet.getCell(positionD, row); //감염병 환자 수
                                 Cell iName = sheet.getCell(positionD, 0); //감염병 이름
-                                Log.d("newaddress", row+"");
+                                String result = "현재 감염된 "+iName.getContents() +"환자 수"+ " : "+iCnt.getContents() + "명";
+                                return result;
+                            }
+
+                            else if(contents.contains(str1)){
+                                Cell iCnt = sheet.getCell(positionD, row); //감염병 환자 수
+                                Cell iName = sheet.getCell(positionD, 0); //감염병 이름
                                 String result = "현재 감염된 "+iName.getContents() +"환자 수"+ " : "+iCnt.getContents() + "명";
                                 return result;
                             }

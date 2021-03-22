@@ -29,12 +29,11 @@ import com.google.android.material.tabs.TabLayout;
 import java.io.IOException;
 import java.util.List;
 
+import static com.kcl.hirus.LodingActivity.addressArr;
 import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity {
 
-    private DrawerLayout mDrawLayout;
-    private Context context = this;
     inf_search is = new inf_search();
     hotissue hi = new hotissue();
     Minigame mg = new Minigame();
@@ -56,17 +55,14 @@ public class MainActivity extends AppCompatActivity {
     TextView human3;
     boolean fragmentOn = false;
     TabLayout tabLayout;
-
-
-
-
     Geocoder geocoder;
     public TextView toolbar_title;
-    public static String addressArr = null;
+    String addressArr = null;
+    static String addressstr = null;
 
 
     public interface OnBackpressedListener {
-        public void onBack();
+        void onBack();
     }
 
     private OnBackpressedListener mBackListener;
@@ -79,9 +75,7 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed(){
         if(mBackListener != null){
             mBackListener.onBack();
-            Log.e("!!!","Listener is not null");
         }else{
-            Log.e("!!!","Listener is null");
 
             if(pressedTime == 0){
                 Toast.makeText(this,"한번 더 누르면 종료됩니다.",Toast.LENGTH_SHORT).show();
@@ -96,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                     super.onBackPressed();
                     Log.e("!!!","OnBackPressed:Finished, killProcess");
                     finish();
-                    android.os.Process.killProcess(android.os.Process.myPid());
+                   // android.os.Process.killProcess(android.os.Process.myPid());
                 }
             }
         }
@@ -108,12 +102,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-       /* //백그라운드 서비스 실행
-        Intent serviceIntent = new Intent(getApplicationContext(),BackgroundService.class);
-        startService(serviceIntent);*/
+        longitude = getIntent().getExtras().getDouble("longitude");
+        latitude = getIntent().getExtras().getDouble("latitude");
+        do_ = getIntent().getExtras().getString("do_");
+        si = getIntent().getExtras().getString("si");
+        addressArr = getIntent().getExtras().getString("title");
 
-
-        gpsTracker = new GpsTracker(this);
+        Log.d("dd",addressArr + longitude + latitude + do_ + si);
+        //gpsTracker = new GpsTracker(this);
 
         human1 = (TextView) findViewById(R.id.BestDesease);
         human2 = (TextView) findViewById(R.id.Human2);
@@ -143,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(6).setIcon(R.drawable.etc_icon);
 
         final Bundle bundle = new Bundle();
-        final Intent intent = getIntent();
 
         human1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,20 +188,49 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void reverseCoding() {
+        List<Address> list = null;
+        try {
+            Log.e("test", latitude + longitude + "");
+            list = LodingActivity.geocoder.getFromLocation(latitude, longitude, 10); // 위도, 경도, 얻어올 값의 개수
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("test", "입출력 오류 - 서버에서 주소변환시 에러발생");
+        }
+        if (list != null) {
+            if (list.size()==0) {
+            } else {
+
+                // 문자열을 자르자!
+                String cut[] = list.get(0).toString().split(" ");
+                // cut[0] : Address[addressLines=[0:"대한민국
+                // cut[1] : 서울특별시  cut[2] : 송파구  cut[3] : 오금동
+                // cut[4] : cut[4] : 41-26"],feature=41-26,admin=null ~~~~
+                //toolbar_title.setText(cut[1] + " " + cut[2] + " " + cut[3]); // 내가 원하는 구의 값을 뽑아내 출력
+                addressArr = cut[1] + " " + cut[2] + " " + cut[3];
+                do_ = cut[2];
+                si = cut[3];
+            }
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         Log.d("!!!!","Resume");
-        latitude = gpsTracker.getLatitude(); // 위도 경도 클래스변수에서 가져옴
-        Log.d("!!!!","위도 : "+latitude);
+        //latitude = gpsTracker.getLatitude(); // 위도 경도 클래스변수에서 가져옴
+       // Log.d("!!!!","위도 : "+latitude);
 
-        longitude = gpsTracker.getLongitude();
-        Log.d("!!!!","경도 : "+longitude);
+        //longitude = gpsTracker.getLongitude();
+       // Log.d("!!!!","경도 : "+longitude);
         toolbar_title= (TextView)findViewById(R.id.toolbar_title);
-        geocoder = new Geocoder(this);  // 역지오코딩 하기 위해
-        reverseCoding();
+        toolbar_title.setText(addressArr);
+        addressstr = addressArr;
+       // geocoder = new Geocoder(this);  // 역지오코딩 하기 위해
+       // reverseCoding();
 
-        Excel.getExcelData(do_, si);
+        Excel.getExcelData(do_,si);
         human1.setText(Excel.bestDeseaseName);
         human2.setText(Excel.secondDeseaseName);
         human3.setText(Excel.thirdDeseaseName);
@@ -221,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if(id == 0) {
                     TextView titles =findViewById(R.id.toolbar_title);
+                    Log.d("dd",addressArr);
                     titles.setText(addressArr);
                     selected = non;
                 }
@@ -269,19 +294,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
         final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         LocationListener mLocationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 //여기서 위치값이 갱신되면 이벤트가 발생한다.
                 //값은 Location 형태로 리턴되며 좌표 출력 방법은 다음과 같다.
-                if(fragmentOn == false) {
-                    reverseCoding();
-                }
+                reverseCoding();
                 Excel.getExcelData(do_, si);
                 human1.setText(Excel.bestDeseaseName);
                 human2.setText(Excel.secondDeseaseName);
                 human3.setText(Excel.thirdDeseaseName);
-                Log.d("test", "onLocationChanged, location:" + location);
+                Log.d("Main", "onLocationChanged, location:" + location + "address : "+do_ + " " + si);
 
 
             }
@@ -320,38 +345,8 @@ public class MainActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
     }
 
-    public void reverseCoding(){ // 위도 경도 넣어가지구 역지오코딩 주소값 뽑아낸다
-       List<Address> list = null;
-        try {
-            list = geocoder.getFromLocation(latitude, longitude, 10); // 위도, 경도, 얻어올 값의 개수
-
-       } catch (IOException e) {
-           e.printStackTrace();
-         Log.e("test", "입출력 오류 - 서버에서 주소변환시 에러발생");
-        }
-        if (list != null) {
-            if (list.size()==0) {
-                toolbar_title.setText("해당되는 주소 정보는 없습니다");
-            } else {
-                // onWhere.setText(list.get(0).toString()); 원래 통으로 나오는 주소값 문자열
-
-                // 문자열을 자르자!
-                String cut[] = list.get(0).toString().split(" ");
-                for(int i=0; i<cut.length; i++){
-                   // System.out.println("cut["+i+"] : " + cut[i]);
-                } // cut[0] : Address[addressLines=[0:"대한민국
-                // cut[1] : 서울특별시  cut[2] : 송파구  cut[3] : 오금동
-                // cut[4] : cut[4] : 41-26"],feature=41-26,admin=null ~~~~
-                toolbar_title.setText(cut[1] + " " + cut[2] + " " + cut[3]); // 내가 원하는 구의 값을 뽑아내 출력
-                addressArr = cut[1] + " " + cut[2] + " " + cut[3];
-                do_ = cut[1];
-                si = cut[2];
-            }
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
