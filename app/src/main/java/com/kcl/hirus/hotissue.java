@@ -27,6 +27,7 @@ public class hotissue extends Fragment implements MainActivity.OnBackpressedList
     TextView issueTitle,Blank;
     TextView[] issueses = new TextView[10];
     String[] keyWords = new String[10];
+    private final int URL_CDC_FLAG = 0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -103,7 +104,7 @@ public class hotissue extends Fragment implements MainActivity.OnBackpressedList
                 keyWords[9] = issueses[9].getText().toString();
                 urlcode = keyWords[9].substring(2);
             }
-            Web web = new Web();
+            Web web = new Web(URL_CDC_FLAG);
             web.setUrlCode(urlcode);
             getFragmentManager().beginTransaction().replace(R.id.layout, web).addToBackStack(null).commit();
         }

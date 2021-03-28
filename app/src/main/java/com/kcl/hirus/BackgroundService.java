@@ -16,6 +16,8 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.Binder;
@@ -98,7 +100,7 @@ public class BackgroundService extends Service{
 
         initializerTimerTask();
 
-        timer.schedule(timerTask, 3, 10000);
+        timer.schedule(timerTask, 5000, 10000);
     }
 
     public void initializerTimerTask() {
@@ -113,7 +115,6 @@ public class BackgroundService extends Service{
                 if(afterStr !=null) {
                     String arr[] = afterStr.split(" ");
                     Excel.getExcelData(arr[1], arr[2]);
-                  //  text = afterStr + "의 감염병 현황입니다.\r" + Excel.bestDeseaseName + "\r" + Excel.secondDeseaseName + "\r" + Excel.thirdDeseaseName;
                 }
 
 
@@ -128,6 +129,8 @@ public class BackgroundService extends Service{
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "1")
                             .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_foreground)) //BitMap 이미지 요구
                             .setContentTitle("해당 지역의 감염병 정보입니다.")
+                            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                            .setVibrate(new long[]{0, 500, 500, 500})
                            // .setContentText(text)
                             // 더 많은 내용이라서 일부만 보여줘야 하는 경우 아래 주석을 제거하면 setContentText에 있는 문자열 대신 아래 문자열을 보여줌
                             //.setStyle(new NotificationCompat.BigTextStyle().bigText("더 많은 내용을 보여줘야 하는 경우..."))
@@ -160,6 +163,8 @@ public class BackgroundService extends Service{
 
                     assert notificationManager != null;
                     notificationManager.notify(1234, builder.build()); // 고유숫자로 노티피케이션 동작시킴
+                   //soundset(builder);//소리 띠링
+                   //setVibrate(builder); //붕
                 }
 
                 beforeStr = afterStr;
@@ -167,6 +172,18 @@ public class BackgroundService extends Service{
 
             }
         };
+    }
+
+    public void soundset( NotificationCompat.Builder builder) {
+        Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+       // soundUri = Uri.parse("android.resource://"+getPackageName()+"/");
+        Log.d("back","sound");
+        builder.setSound(soundUri);
+    }
+
+    public void setVibrate(NotificationCompat.Builder builder) {
+        builder.setVibrate(new long[]{0, 500, 500, 500});
+        Log.d("back","vib");
     }
 
     public void stopTimerTask(){

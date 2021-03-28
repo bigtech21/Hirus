@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 public class inf_search extends Fragment implements MainActivity.OnBackpressedListener{
     SearchView search;
-
+    private final int URL_CDC_FLAG = 0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class inf_search extends Fragment implements MainActivity.OnBackpressedLi
                 @Override
                 public boolean onQueryTextSubmit(String s) {
 
-                        Web web = new Web();
+                        Web web = new Web(URL_CDC_FLAG);
                         String searchText = s;
                         web.setUrlCode(searchText);
                         getFragmentManager().beginTransaction().replace(R.id.webAdd, web).commit();
