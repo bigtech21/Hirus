@@ -27,6 +27,7 @@ public class Excel {
     static int bestDesease;
     static int secondDesease;
     static int thirdDesease;
+    static int patientcnt;
 
     static String bestDeseaseName;
     static String secondDeseaseName;
@@ -150,13 +151,12 @@ public class Excel {
     public static String copyExcelDataToDatabase(TextView address, String desease) { //AboutInfection 클래스에서 사용
 
         String addresses = null;
-        String dataAddress = null;
         String newaddress[] = null;
         int positionD = selectDesease(desease);
+        patientcnt = 0;
 
         try {
 
-            Log.d("주소", address.getText().toString());
             addresses = address.getText().toString();//현주소
             newaddress = addresses.split(" ");//현주소자른, 0 = ~시, 1 = ~구,동
             String str1 = newaddress[0].replaceAll("\\P{Print}","");
@@ -182,6 +182,7 @@ public class Excel {
                                 Cell iCnt = sheet.getCell(positionD, row); //감염병 환자 수
                                 Cell iName = sheet.getCell(positionD, 0); //감염병 이름
                                 String result = "현재 감염된 "+iName.getContents() +"환자 수"+ " : "+iCnt.getContents() + "명";
+                                patientcnt = Integer.parseInt(iCnt.getContents());
                                 return result;
                             }
 
@@ -189,6 +190,7 @@ public class Excel {
                                 Cell iCnt = sheet.getCell(positionD, row); //감염병 환자 수
                                 Cell iName = sheet.getCell(positionD, 0); //감염병 이름
                                 String result = "현재 감염된 "+iName.getContents() +"환자 수"+ " : "+iCnt.getContents() + "명";
+                                patientcnt = Integer.parseInt(iCnt.getContents());
                                 return result;
                             }
                         }

@@ -22,7 +22,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
 
-            android:background="@drawable/edge"
+            android:background="@drawable/edge_grean"
             android:gravity="center"
             android:text="오류"
             app:layout_constraintBottom_toBottomOf="parent"

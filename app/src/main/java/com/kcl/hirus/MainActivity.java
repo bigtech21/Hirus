@@ -96,6 +96,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void setColor(TextView tv) {
+        String str = tv.getText().toString();
+        Excel.copyExcelDataToDatabase(toolbar_title,str);
+        int cnt = Excel.patientcnt;
+        if(cnt >=1 && cnt <10)tv.setBackgroundResource(R.drawable.edge_blue);
+        else if(cnt >=10 && cnt <50)tv.setBackgroundResource(R.drawable.edge_yellow);
+        else if(cnt >=50 && cnt <100)tv.setBackgroundResource(R.drawable.edge_orange);
+        else if(cnt >=100)tv.setBackgroundResource(R.drawable.edge_red);
+        else tv.setBackgroundResource(R.drawable.edge_grean);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
         human1 = (TextView) findViewById(R.id.BestDesease);
         human2 = (TextView) findViewById(R.id.Human2);
         human3 = (TextView) findViewById(R.id.Human3);
+
 
 
 
@@ -232,8 +244,11 @@ public class MainActivity extends AppCompatActivity {
 
         Excel.getExcelData(do_,si);
         human1.setText(Excel.bestDeseaseName);
+        setColor(human1);
         human2.setText(Excel.secondDeseaseName);
+        setColor(human2);
         human3.setText(Excel.thirdDeseaseName);
+        setColor(human3);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
