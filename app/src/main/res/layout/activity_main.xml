@@ -5,7 +5,8 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="#ffffff"
+    tools:context="activity.MainActivity">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -18,17 +19,45 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar">
 
         <TextView
+            android:id="@+id/current"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="현재 위치"
+            android:textSize="24dp"
+            android:textColor="#ffffff"
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@id/toolbar_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textColor="#ffffff"
+            android:textSize="18dp"
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@id/BestDesease"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/current" />
+
+        <TextView
             android:id="@+id/Human3"
             android:layout_width="0dp"
             android:layout_height="0dp"
 
-            android:background="@drawable/edge_grean"
+            android:background="@drawable/edge_green"
             android:gravity="center"
             android:text="오류"
+            android:textColor="#ffffff"
+            app:layout_constraintVertical_weight="1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/Human2"
-            app:layout_constraintTop_toBottomOf="@id/BestDesease"/>
+            app:layout_constraintTop_toBottomOf="@id/BestDesease" />
 
         <TextView
             android:id="@+id/Human2"
@@ -37,27 +66,51 @@
 
             android:background="@drawable/edge_orange"
             android:gravity="center"
-
             android:text="오류"
+            android:textColor="#ffffff"
+            app:layout_constraintVertical_weight="1"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/Human3"
-            app:layout_constraintTop_toBottomOf="@id/BestDesease"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/BestDesease" />
 
         <TextView
             android:id="@+id/BestDesease"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/edge_red"
             android:fontFamily="sans-serif"
-            android:gravity="center"
+            android:gravity="center_horizontal"
             android:text="오류"
-            android:textColor="#000000"
-            android:textSize="30sp"
+            android:textColor="#ffffff"
+            android:textSize="40sp"
+            app:layout_constraintVertical_weight="4"
             app:layout_constraintBottom_toTopOf="@id/Human2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/toolbar_title" />
+
+        <ImageView
+            android:id="@+id/faces"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/BestDesease"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/BestDesease"
+            app:srcCompat="@drawable/ssmile" />
+
+        <TextView
+            android:id="@+id/patientcnt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textColor="#ffffff"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="@id/BestDesease"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/faces" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.tabs.TabLayout
@@ -96,40 +149,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <com.google.android.material.tabs.TabItem
-            android:id="@+id/settings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <com.google.android.material.tabs.TabItem
-            android:id="@+id/etct"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
     </com.google.android.material.tabs.TabLayout>
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:background="#FFFFFF"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toTopOf="@id/layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/layout"/>
-
-    <TextView
-        android:id="@+id/toolbar_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-        app:layout_constraintEnd_toEndOf="@+id/toolbar"
-        app:layout_constraintStart_toStartOf="@+id/toolbar"
-        app:layout_constraintTop_toTopOf="@id/toolbar" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

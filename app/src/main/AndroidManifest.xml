@@ -22,12 +22,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".MainActivity"
+        <activity android:name="activity.MainActivity"
 
             ></activity>
 
         <receiver
-            android:name="com.kcl.hirus.BootReceiver"
+            android:name="com.kcl.hirus.service.BootReceiver"
             android:enabled="true"
             android:exported="false"
             android:label="BOOTReceiver">
@@ -50,12 +50,16 @@
             android:value="AIzaSyCoRExXiGI01yVA4GIPPI0izheWu-umF0s" />
 
         <activity
-            android:name=".CurMap"
+            android:name="activity.CurMapActivity"
             android:label="@string/title_activity_cur_map" />
 
+        <activity
+            android:name="activity.SettingActivity"
+            android:label="@string/action_settings" />
 
 
-        <activity android:name=".LodingActivity">
+
+        <activity android:name="activity.LodingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -64,7 +68,7 @@
         </activity>
 
         <service
-            android:name=".BackgroundService"
+            android:name="service.BackgroundService"
             android:enabled="true"
             android:stopWithTask="false">
             <intent-filter>
@@ -74,7 +78,7 @@
         </service>
 
         <receiver
-            android:name="com.kcl.hirus.RestarterBroadcastReceiver"
+            android:name="com.kcl.hirus.receiver.RestarterBroadcastReceiver"
             android:enabled="true"
             android:exported="true"
             android:label="RestartServiceWhenStopped">

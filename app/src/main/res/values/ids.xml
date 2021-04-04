@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name = "smile" type="id"/>
+    <item name = "ssmile" type="id"/>
+    <item name = "unsmile" type="id"/>
+    <item name = "nonsmile" type="id"/>
+    <item name = "die" type="id"/>
+
+</resources>

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:orientation="vertical"
-    tools:context=".AboutInfection"
+    tools:context="fragment.AboutInfectionFragment"
     android:clickable="true">
 
     <TextView

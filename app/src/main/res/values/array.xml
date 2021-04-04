@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="array_background">
+        <item>사용 안함</item>
+        <item>무음</item>
+        <item>진동</item>
+        <item>소리와 진동</item>
+    </string-array>
+</resources>

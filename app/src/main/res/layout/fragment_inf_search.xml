@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:orientation="vertical"
-    tools:context=".inf_search"
+    tools:context="fragment.SearchFragment"
     android:clickable="true">
 
     <SearchView

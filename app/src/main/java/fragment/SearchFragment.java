@@ -1,0 +1,70 @@
+package fragment;
+
+import android.content.Context;
+import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.SearchView;
+import android.widget.Toast;
+
+import com.kcl.hirus.R;
+
+import activity.MainActivity;
+
+public class SearchFragment extends Fragment implements MainActivity.OnBackpressedListener{
+    SearchView search;
+    private final int URL_CDC_FLAG = 0;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        Log.d("test","created");
+        final View rootView = inflater.inflate(R.layout.fragment_inf_search, container, false);
+        search = rootView.findViewById(R.id.searchView);
+        try {
+            search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+
+                        WebFragment web = new WebFragment(URL_CDC_FLAG);
+                        String searchText = s;
+                        web.setUrlCode(searchText);
+                        getFragmentManager().beginTransaction().replace(R.id.webAdd, web).commit();
+                        Log.d("Web", "추가");
+
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    return false;
+                }
+            });
+        }catch(Exception e){
+            Toast.makeText(getContext(), "잘못된 접근입니다.",Toast.LENGTH_SHORT).show();
+        }
+        return rootView;
+    }
+
+    @Override
+    public void onBack() {
+        Log.e("etc","onBack()");
+        MainActivity activity = (MainActivity)getActivity();
+        activity.setOnBackPressedListener(null);
+        activity.tabLayout.getTabAt(0).select();
+        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+        activity.toolbar_title.setText(activity.addressArr);
+    }
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        Log.e("etc","onAttach()");
+        ((MainActivity)context).setOnBackPressedListener(this);
+    }
+}

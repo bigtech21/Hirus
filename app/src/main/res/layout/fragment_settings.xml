@@ -1,36 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/settings_fr"
+    android:id="@+id/setfr"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
+    android:clickable="true"
     android:orientation="vertical"
-    tools:context=".Setting"
-    android:clickable="true">
+    tools:context="activity.SettingActivity">
 
-    <Switch
-        android:id="@+id/sound_vibe"
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/setfragment"
+        android:name="fragment.SettingPreferenceFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="진동, 소리" />
-
-    <Switch
-        android:id="@+id/app_push"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="푸쉬 알림(현재는 알림 기능 테스트)" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Button" />
-
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Button" />
-
+        android:layout_height="match_parent"
+        tools:context="activity.SettingActivity" />
 </LinearLayout>
