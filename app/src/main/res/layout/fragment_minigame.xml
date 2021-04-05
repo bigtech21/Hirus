@@ -5,15 +5,17 @@
     android:id="@+id/minigame_fr"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    tools:context="fragment.MinigameFragment"
-    android:clickable="true">
+    android:background="#dcf0fa"
+    android:clickable="true"
+    tools:context="fragment.MinigameFragment">
 
     <TextView
         android:id="@+id/problem"
         android:layout_width="399dp"
         android:layout_height="213dp"
+        android:layout_marginStart="5dp"
         android:layout_marginTop="50dp"
+        android:layout_marginEnd="5dp"
         android:background="@drawable/edge_white"
         android:gravity="center"
         android:text="TextView"
@@ -41,6 +43,7 @@
         android:id="@+id/ansApply"
         android:layout_width="82dp"
         android:layout_height="44dp"
+        android:background="@drawable/btncolor"
         android:text="제출"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

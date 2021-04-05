@@ -14,13 +14,18 @@
         android:id="@+id/Infested"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="감염병 현황" />
+        android:gravity="center"
+        android:text="감염병 현황"
+        android:textColor="#000000"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/city"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:gravity="center"
+        android:text="TextView"
+        android:textColor="#000000" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/AIWEB"

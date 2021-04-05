@@ -1,6 +1,7 @@
 package fragment;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -18,6 +20,7 @@ import activity.MainActivity;
 
 public class SearchFragment extends Fragment implements MainActivity.OnBackpressedListener{
     SearchView search;
+    LinearLayout layout;
     private final int URL_CDC_FLAG = 0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -25,6 +28,8 @@ public class SearchFragment extends Fragment implements MainActivity.OnBackpress
         Log.d("test","created");
         final View rootView = inflater.inflate(R.layout.fragment_inf_search, container, false);
         search = rootView.findViewById(R.id.searchView);
+        layout = rootView.findViewById(R.id.inf_search_fr);
+
         try {
             search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 

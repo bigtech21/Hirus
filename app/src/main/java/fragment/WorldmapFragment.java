@@ -61,7 +61,6 @@ public class WorldmapFragment extends Fragment implements MainActivity.OnBackpre
     Vector<Integer> confirmedVector = new Vector<Integer>();
     Vector<String> nameVector = new Vector<String>();
     CountryTouchListener countryTouchListener;
-    Fragment result;
     int dialogcnt = 0;
     int selected = 0; //0 코로나 1 테스트 2 테스트
     String nstr = "";
@@ -112,7 +111,6 @@ public class WorldmapFragment extends Fragment implements MainActivity.OnBackpre
         });
 
         countryTouchListener = new CountryTouchListener();
-        result = getFragmentManager().findFragmentById(R.id.coronaLayout);
 
         for(int i = 0; i < countriesID.length; i++){
             contriesCnt[i] = i;
@@ -171,6 +169,7 @@ public class WorldmapFragment extends Fragment implements MainActivity.OnBackpre
 
 
         }
+        getActivity().findViewById(R.id.toolbar).setBackgroundColor(Color.parseColor("#c8f0fa"));
         return rootview;
     }
 
@@ -686,13 +685,22 @@ public class WorldmapFragment extends Fragment implements MainActivity.OnBackpre
                             nstr = nstr.concat(nameVector.get(contriesCnt[152]) + "\n확진자 수 : " + confirmedVector.get(contriesCnt[152]) + "명\n\n");
                             break;
                     }
-                    Log.d("event",nstr);
+
                     dialogcnt++;
-                    Log.d("do",dialogcnt+"");
                     touch = false;
+                    String alertTitle = null;
+            if (selected == 0) {
+                alertTitle = "COVID-19 감염병 현황";
+            }
+            else if(selected == 1) {
+                alertTitle = "테스트1 감염병 현황";
+            }
+            else if (selected == 2) {
+                alertTitle = "테스트2 감염병 현황";
+            }
                     a = new AlertDialog.Builder(getContext());
 
-                        a.setTitle("선택한 구역의 감염병 현황")
+                        a.setTitle(alertTitle)
                                 .setMessage(nstr)
                                 .setNeutralButton("확인", new DialogInterface.OnClickListener() {
                                     @Override

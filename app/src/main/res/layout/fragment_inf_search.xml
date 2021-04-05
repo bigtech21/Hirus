@@ -5,10 +5,10 @@
     android:id="@+id/inf_search_fr"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="#dcf0fa"
+    android:clickable="true"
     android:orientation="vertical"
-    tools:context="fragment.SearchFragment"
-    android:clickable="true">
+    tools:context="fragment.SearchFragment">
 
     <SearchView
         android:id="@+id/searchView"
@@ -24,6 +24,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="검색어를 입력해주세요."
+            android:textColor="#000000"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

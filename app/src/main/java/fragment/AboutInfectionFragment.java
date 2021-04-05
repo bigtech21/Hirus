@@ -119,29 +119,22 @@ public class AboutInfectionFragment extends Fragment implements MainActivity.OnB
                     int rowIndexStart = 0;                  // row 인덱스 시작
                     int rowTotal = sheet.getColumn(colTotal-1).length;
 
-                    StringBuilder sb;
                     for(int row=rowIndexStart;row<rowTotal;row++) {
-                        sb = new StringBuilder();
-                        for(int col=0;col<colTotal;col++) {
                             String contents = sheet.getCell(0, row).getContents().replaceAll("\\P{Print}","");
-                            sb.append("col"+col+" : "+contents+" , ");
 
                             if(contents.contains(str2)){
                                 Cell iCnt = sheet.getCell(positionD, row); //감염병 환자 수
-                                Cell iName = sheet.getCell(positionD, 0); //감염병 이름
-                                String result = "현재 감염된 "+iName.getContents() +"환자 수"+ " : "+iCnt.getContents() + "명";
+                                String result = "감염된 환자 수"+ " : "+iCnt.getContents() + "명";
                                 patientcnt = Integer.parseInt(iCnt.getContents());
                                 return result;
                             }
 
                             else if(contents.contains(str1)){
                                 Cell iCnt = sheet.getCell(positionD, row); //감염병 환자 수
-                                Cell iName = sheet.getCell(positionD, 0); //감염병 이름
-                                String result = "현재 감염된 "+iName.getContents() +"환자 수"+ " : "+iCnt.getContents() + "명";
+                                String result = "감염된 환자 수"+ " : "+iCnt.getContents() + "명";
                                 patientcnt = Integer.parseInt(iCnt.getContents());
                                 return result;
                             }
-                        }
                     }
                 }
             }
@@ -178,7 +171,6 @@ public class AboutInfectionFragment extends Fragment implements MainActivity.OnB
 
         Bundle bundle = getArguments();
         desease = bundle.getString("text");
-
 
         address = rootView.findViewById(R.id.Infested);
         reverseCoding();
@@ -220,9 +212,6 @@ public class AboutInfectionFragment extends Fragment implements MainActivity.OnB
             } else {
 
                 String cut[] = list.get(0).toString().split(" ");
-                for(int i=0; i<cut.length; i++){
-                    System.out.println("cut["+i+"] : " + cut[i]);
-                }
                 addressArr = cut[2] +" "+cut[3]+" "+ desease+" 현황";
             }
         }

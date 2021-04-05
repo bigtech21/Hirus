@@ -5,7 +5,7 @@
     android:id="@+id/worldMap_fr"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
+    android:background="#c8f0fa"
     android:clickable="true"
     android:orientation="vertical"
     tools:context="fragment.WorldmapFragment">
@@ -13,7 +13,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#4503A9F4"
         android:orientation="horizontal">
 
         <Button
@@ -50,7 +49,6 @@
                 android:id="@+id/BG"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:background="#4503A9F4"
                 android:src="@drawable/back"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

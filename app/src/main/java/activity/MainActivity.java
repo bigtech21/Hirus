@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     String bestDeseaseName, secondDeseaseName, thirdDeseaseName;
     public String addressArr = null;
     public static String addressstr = null;
+    public String mainColor = null;
     String[] deseases = new String[67];
 
     public boolean fragmentOn = false;
@@ -261,7 +262,9 @@ public class MainActivity extends AppCompatActivity {
         copyExcelDataToDatabase(toolbar_title,str);
 
         int cnt = patientcnt;
-        if(cnt >=1 && cnt <10) tv.setBackgroundColor(Color.parseColor("#800099ff"));
+        if(cnt >=1 && cnt <10){
+            tv.setBackgroundColor(Color.parseColor("#800099ff"));
+            tv.setTextColor(Color.parseColor("#000000"));}
         else if(cnt >=10 && cnt <50){
             tv.setBackgroundColor(Color.parseColor("#80FFff33"));
             tv.setTextColor(Color.parseColor("#000000"));
@@ -281,6 +284,8 @@ public class MainActivity extends AppCompatActivity {
             cur.setBackgroundColor(Color.parseColor("#800099ff"));
             lo.setBackgroundColor(Color.parseColor("#800099ff"));
             toolbar.setBackgroundColor(Color.parseColor("#800099ff"));
+            tv.setTextColor(Color.parseColor("#000000"));
+            mainColor = "800099ff";
             iv.setImageResource(R.drawable.smile);
         }
         else if(bestcnt >=10 && bestcnt <50){
@@ -289,6 +294,7 @@ public class MainActivity extends AppCompatActivity {
             lo.setBackgroundColor(Color.parseColor("#80FFff33"));
             toolbar.setBackgroundColor(Color.parseColor("#80FFff33"));
             tv.setTextColor(Color.parseColor("#000000"));
+            mainColor = "80FFff33";
             iv.setImageResource(R.drawable.nonsmile);
         }
         else if(bestcnt >=50 && bestcnt <100){
@@ -296,13 +302,15 @@ public class MainActivity extends AppCompatActivity {
             cur.setBackgroundColor(Color.parseColor("#80FF9933"));
             lo.setBackgroundColor(Color.parseColor("#80FF9933"));
             toolbar.setBackgroundColor(Color.parseColor("#80FF9933"));
+            mainColor = "80FF9933";
             iv.setImageResource(R.drawable.unsmile);
         }
         else if(bestcnt >=100){
-            tv.setBackgroundColor(Color.parseColor("#80ff0000"));
-            cur.setBackgroundColor(Color.parseColor("#80ff0000"));
-            lo.setBackgroundColor(Color.parseColor("#80ff0000"));
-            toolbar.setBackgroundColor(Color.parseColor("#80ff0000"));
+            tv.setBackgroundColor(Color.parseColor("#ff8282"));
+            cur.setBackgroundColor(Color.parseColor("#ff8282"));
+            lo.setBackgroundColor(Color.parseColor("#ff8282"));
+            toolbar.setBackgroundColor(Color.parseColor("#ff8282"));
+            mainColor = "#ff8282";
             iv.setImageResource(R.drawable.die);
         }
         else{
@@ -310,8 +318,10 @@ public class MainActivity extends AppCompatActivity {
             cur.setBackgroundColor(Color.parseColor("#8099FF99"));
             lo.setBackgroundColor(Color.parseColor("#8099FF99"));
             toolbar.setBackgroundColor(Color.parseColor("#8099FF99"));
+            mainColor = "8099FF99";
             iv.setImageResource(R.drawable.ssmile);
         }
+
     }
 
 
@@ -412,13 +422,15 @@ public class MainActivity extends AppCompatActivity {
                 int id = tab.getPosition();
                 Log.d("id", id+"");
                 Fragment selected = null;
+                bundle.putString("color" , mainColor);
+                int col = 0;
 
                 if(id == 0) {
                     TextView titles =findViewById(R.id.toolbar_title);
                     Log.d("dd",addressArr);
                     titles.setText(addressArr);
                     selected = non;
-                    int col = 0;
+
                     if(bestcnt >=1 && bestcnt <10) col = Color.parseColor("#800099ff");
                     else if (bestcnt >=10 && bestcnt <50) col = Color.parseColor("#80FFff33");
                     else if(bestcnt >=50 && bestcnt <100) col = Color.parseColor("#80FF9933");
@@ -427,24 +439,20 @@ public class MainActivity extends AppCompatActivity {
                     toolbar.setBackgroundColor(col);
                 }
                 else if(id == 1) {
-                    TextView titles =findViewById(R.id.toolbar_title);
-                    toolbar.setBackgroundColor(Color.parseColor("#FFFFFF"));
                     selected = is;
+                    toolbar.setBackgroundColor(Color.parseColor("#dcf0fa"));
                 }
                 else if(id == 2){
-                    TextView titles =findViewById(R.id.toolbar_title);
-                    toolbar.setBackgroundColor(Color.parseColor("#FFFFFF"));
                     selected = hi;
+                    toolbar.setBackgroundColor(Color.parseColor("#dcf0fa"));
                 }
                 else if(id == 3){
-                    TextView titles =findViewById(R.id.toolbar_title);
-                    toolbar.setBackgroundColor(Color.parseColor("#FFFFFF"));
                     selected = mg;
+                    toolbar.setBackgroundColor(Color.parseColor("#dcf0fa"));
                 }
                 else if(id == 4){
-                    TextView titles =findViewById(R.id.toolbar_title);
-                    toolbar.setBackgroundColor(Color.parseColor("#4503A9F4"));
                     selected = wm;
+                    toolbar.setBackgroundColor(Color.parseColor("#dcf0fa"));
                 }
                 getSupportFragmentManager().beginTransaction().replace(R.id.layout, selected).commit();
             }
@@ -513,19 +521,19 @@ public class MainActivity extends AppCompatActivity {
         Fragment lastFragment = non;
         if(id == 0){
             //toolbar.setBackgroundColor(human1);
-            getSupportFragmentManager().beginTransaction().replace(R.id.container, non).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.layout, non).commit();
         }
         else if(id ==R.id.inf_search_fr){
             lastFragment = is;
-            getSupportFragmentManager().beginTransaction().replace(R.id.container, is).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.layout, is).commit();
         }
         else if (id == 2){
             lastFragment = hi;
-            getSupportFragmentManager().beginTransaction().replace(R.id.container, hi).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.layout, hi).commit();
         }
         else if( id == 3){
             lastFragment = mg;
-            getSupportFragmentManager().beginTransaction().replace(R.id.container, mg).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.layout, mg).commit();
         }
         else if(id == 4) {
             lastFragment = wm;

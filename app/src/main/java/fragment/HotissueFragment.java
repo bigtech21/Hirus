@@ -18,14 +18,17 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import activity.MainActivity;
 
 
 public class HotissueFragment extends Fragment implements MainActivity.OnBackpressedListener{
-    TextView issueTitle,Blank;
+    TextView issueTitle,curTime;
     TextView[] issueses = new TextView[10];
     String[] keyWords = new String[10];
+    String timeStr;
     private final int URL_CDC_FLAG = 0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,10 +46,15 @@ public class HotissueFragment extends Fragment implements MainActivity.OnBackpre
         issueses[8] = rootView.findViewById(R.id.nine);
         issueses[9] = rootView.findViewById(R.id.ten);
 
-        int i = 0;
 
-        Blank = rootView.findViewById(R.id.blank);
-        Blank.setText("");
+        int i = 0;
+        long cur = System.currentTimeMillis();
+        Date mCur = new Date(cur);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM월 dd일 hh시 mm분 기준\n");
+        timeStr = simpleDateFormat.format(mCur);
+
+        curTime = rootView.findViewById(R.id.time);
+        curTime.setText(timeStr);
 
 
         getWebsite();
@@ -65,43 +73,43 @@ public class HotissueFragment extends Fragment implements MainActivity.OnBackpre
             String urlcode = "a20101000000";
             if(v.getId() == R.id.one){
                 keyWords[0] = issueses[0].getText().toString();
-                urlcode = keyWords[0].substring(2);
+                urlcode = keyWords[0].trim().substring(2);
             }
             else if(v.getId() == R.id.two){
                 keyWords[1] = issueses[1].getText().toString();
-                urlcode = keyWords[1].substring(2);
+                urlcode = keyWords[1].trim().substring(2);
             }
             else if(v.getId() == R.id.three){
                 keyWords[2] = issueses[2].getText().toString();
-                urlcode = keyWords[2].substring(2);
+                urlcode = keyWords[2].trim().substring(2);
             }
             else if(v.getId() == R.id.four){
                 keyWords[3] = issueses[3].getText().toString();
-                urlcode = keyWords[3].substring(2);
+                urlcode = keyWords[3].trim().substring(2);
             }
             else if(v.getId() == R.id.five){
                 keyWords[4] = issueses[4].getText().toString();
-                urlcode = keyWords[4].substring(2);
+                urlcode = keyWords[4].trim().substring(2);
             }
             else if(v.getId() == R.id.six){
                 keyWords[5] = issueses[5].getText().toString();
-                urlcode = keyWords[5].substring(2);
+                urlcode = keyWords[5].trim().substring(2);
             }
             else if(v.getId() == R.id.seven){
                 keyWords[6] = issueses[6].getText().toString();
-                urlcode = keyWords[6].substring(2);
+                urlcode = keyWords[6].trim().substring(2);
             }
             else if(v.getId() == R.id.eight){
                 keyWords[7] = issueses[7].getText().toString();
-                urlcode = keyWords[7].substring(2);
+                urlcode = keyWords[7].trim().substring(2);
             }
             else if(v.getId() == R.id.nine){
                 keyWords[8] = issueses[8].getText().toString();
-                urlcode = keyWords[8].substring(2);
+                urlcode = keyWords[8].trim().substring(2);
             }
             else if(v.getId() == R.id.ten){
                 keyWords[9] = issueses[9].getText().toString();
-                urlcode = keyWords[9].substring(2);
+                urlcode = keyWords[9].trim().substring(2);
             }
             WebFragment web = new WebFragment(URL_CDC_FLAG);
             web.setUrlCode(urlcode);
@@ -127,9 +135,14 @@ public class HotissueFragment extends Fragment implements MainActivity.OnBackpre
                     for(int i = 0; i<10; i++) {
                         Log.d("Web", issueKeyword[i+1]);
                         String str = issueKeyword[i+1];
-
+                        String newStr;
                        String cnt = Integer.toString(i+1);
-                        String newStr = str.replaceFirst(cnt,cnt + ". ");
+                        if (i == 0) {
+                            newStr = str.replaceFirst(cnt, "               " + cnt + "위    ");
+                        }
+                        else{
+                            newStr = str.replaceFirst(cnt, "                    " + cnt + "위     ");
+                        }
                         issueses[i].setText(newStr);
                     }
 
