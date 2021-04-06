@@ -77,11 +77,12 @@ public class BackgroundService extends Service{
         try {
             String si = sii;
             arrinit();
+
             //배열 초기화
             for(int i = 0; i < deseases.length ; i++){
                 deseases[i] = "";
             }
-
+            Log.d("background",wb+"") ;
             int key, k, l;
             int addressPosition = 0;
             if(wb != null){
@@ -147,10 +148,10 @@ public class BackgroundService extends Service{
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         try {
-            this.context = context;
+            this.context = getApplicationContext();
             InputStream is = context.getResources().getAssets().open("database.xls");
             wb = Workbook.getWorkbook(is);
-        }catch (Exception e){}
+        }catch (Exception e){e.printStackTrace();}
 
 
         final String strId ="10" ;
@@ -158,7 +159,9 @@ public class BackgroundService extends Service{
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, strId)
                 .setSmallIcon(R.mipmap.ic_hirus)
-               .setContentText("감염병 정보를 탐색하고 있습니다.");
+               .setContentText("감염병 정보를 탐색하고 있습니다.")
+                .setSmallIcon(R.drawable.hicon);
+
                // .setContentTitle("");
 
         Intent notiIntent = new Intent(getApplicationContext(), MainActivity.class);
@@ -197,7 +200,7 @@ public class BackgroundService extends Service{
 
     @Override
     public boolean stopService(Intent name) {
-        Log.d("dddd","므엥엥");
+        Log.d("background","stopService");
         return super.stopService(name);
     }
 
@@ -227,7 +230,9 @@ public class BackgroundService extends Service{
                 }
 
 
+
                if(beforeStr != afterStr){
+                   Log.d("background",beforeStr + " : "+afterStr);
                     NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 
                     Intent notificationIntent = new Intent(getApplicationContext(), LodingActivity.class);
@@ -236,7 +241,7 @@ public class BackgroundService extends Service{
                     PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,  PendingIntent.FLAG_UPDATE_CURRENT);
 
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "1")
-                            .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_foreground)) //BitMap 이미지 요구
+                            .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.hicon)) //BitMap 이미지 요구
                             .setContentTitle("해당 지역의 감염병 정보입니다.")
                            // .setContentText(text)
                             // 더 많은 내용이라서 일부만 보여줘야 하는 경우 아래 주석을 제거하면 setContentText에 있는 문자열 대신 아래 문자열을 보여줌
@@ -256,12 +261,13 @@ public class BackgroundService extends Service{
                    inboxStyle.addLine(bestDeseaseName);
                    inboxStyle.addLine(secondDeseaseName);
                    inboxStyle.addLine(thirdDeseaseName);
+                   Log.d("backgroundService",bestDeseaseName+secondDeseaseName+thirdDeseaseName);
 
                     //OREO API 26 이상에서는 채널 필요
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
                         builder.setSmallIcon(R.drawable.ic_launcher_foreground); //mipmap 사용시 Oreo 이상에서 시스템 UI 에러남
-                        CharSequence channelName  = "해당 지역의 감염병 정보입니다.";
+                        CharSequence channelName  = "해당 지역의 감염병 정보입니다.2";
                         String description = "테스트1";
                         int importance = NotificationManager.IMPORTANCE_HIGH;
 

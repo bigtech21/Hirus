@@ -31,7 +31,7 @@ public class SubThread extends Thread{
         while(true) {
             try {
                 Log.d("SubThread","run");
-                sleep(1000);
+                sleep(10000);
                 optioncheck();
                 if(!(prefs.getString("backsetlist","").equals("사용 안함"))) {
                     serviceRun();

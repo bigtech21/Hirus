@@ -469,6 +469,7 @@ public class MainActivity extends AppCompatActivity {
                 //여기서 위치값이 갱신되면 이벤트가 발생한다.
                 reverseCoding();
                 getExcelData(do_, si);
+                toolbar_title.setText(addressArr);
                 human1.setText(bestDeseaseName);
                 human2.setText(secondDeseaseName);
                 human3.setText(thirdDeseaseName);
