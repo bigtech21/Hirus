@@ -16,6 +16,8 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -29,15 +31,24 @@ import java.util.Vector;
 import activity.MainActivity;
 import jxl.Sheet;
 import jxl.Workbook;
+import pl.polidea.view.ZoomView;
 
 
-public class WorldmapFragment extends Fragment implements MainActivity.OnBackpressedListener {
+public class WorldmapFragment extends Fragment{
+
     HorizontalScrollView scrollView;
     AlertDialog.Builder a;
     AlertDialog ad[] = new AlertDialog[10];
     ScaleGestureDetector scaleGestureDetector;
-    float mScaleFactor = 1.0f;
+    float mScaleFactor = 1.1f;
+    float lastScaleFactor = 0f;
+    float dx = 0f;
+    float dy = 0f;
 
+    private static final float MIN_ZOOM = 1.0f;
+    private static final float MAX_ZOOM = 2.0f;
+
+    int zoomcnt = 0;
 
     int[] countriesID = {R.id.CA, R.id.US, R.id.GL, R.id.MX, R.id.GT, //~4
             R.id.HD, R.id.ELS, R.id.BLZ, R.id.NCG, R.id.CR, R.id.PNM, R.id.CB, R.id.VZ, R.id.ECD, R.id.PR, //~14
@@ -77,6 +88,7 @@ public class WorldmapFragment extends Fragment implements MainActivity.OnBackpre
 
         final View rootview = inflater.inflate(R.layout.fragment_world_map,container,false);
 
+
         scaleGestureDetector = new ScaleGestureDetector(getContext(),new ScaleListener());
 
         layout = rootview.findViewById(R.id.worldMap_fr);
@@ -93,19 +105,9 @@ public class WorldmapFragment extends Fragment implements MainActivity.OnBackpre
         scrollView = rootview.findViewById(R.id.WhitemapView);
         scrollView.setHorizontalScrollBarEnabled(true);
         scrollView.setOnTouchListener(new View.OnTouchListener() {
-
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-               switch (event.getAction()){
-                    case MotionEvent.ACTION_MOVE:
-                        if(event.getPointerCount() == 2) {
-                            Log.d("dr","do");
-                            scaleGestureDetector.onTouchEvent(event);
-                            return true;
-                        }
-                        break;
-                }
-
+                scaleGestureDetector.onTouchEvent(event);
                 return false;
             }
         });
@@ -193,32 +195,8 @@ public class WorldmapFragment extends Fragment implements MainActivity.OnBackpre
                 }
             }
 
-        }catch (Exception e){e.printStackTrace();};
-
-
+        }catch (Exception e){e.printStackTrace();}
     }
-
-
-
-
-    @Override
-    public void onBack() {
-        Log.e("etc","onBack()");
-        MainActivity activity = (MainActivity)getActivity();
-        activity.setOnBackPressedListener(null);
-        activity.tabLayout.getTabAt(0).select();
-        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
-        activity.toolbar_title.setText(activity.addressArr);
-    }
-
-    @Override
-    public void onAttach(Context context){
-        super.onAttach(context);
-        Log.e("etc","onAttach()");
-        ((MainActivity)context).setOnBackPressedListener(this);
-    }
-
-
 
     class CountryTouchListener implements View.OnClickListener {
         @Override
@@ -724,18 +702,41 @@ public class WorldmapFragment extends Fragment implements MainActivity.OnBackpre
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
         @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-
-            mScaleFactor *= scaleGestureDetector.getScaleFactor();
-            Log.d("scale",mScaleFactor+"");
-            mScaleFactor = Math.max(1.0f, Math.min(mScaleFactor, 3.0f));
-
-            scrollView.setScaleX(mScaleFactor);
-            scrollView.setScaleY(mScaleFactor);
-
-
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
             return true;
         }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+
+        }
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            float scaleFactor = detector.getScaleFactor();
+            //if (/*lastScaleFactor == 0 || (Math.signum(scaleFactor) == Math.signum(lastScaleFactor))*/) {
+                zoomcnt++;
+                if(zoomcnt > 1) {
+                    zoomcnt = 0;
+                    mScaleFactor *= scaleFactor;
+                    mScaleFactor = Math.max(MIN_ZOOM, Math.min(mScaleFactor, MAX_ZOOM));
+                    lastScaleFactor = scaleFactor;
+                    applyScaleAndTranslation();
+                    Log.d("scale", mScaleFactor + " " + lastScaleFactor);
+                }
+           // }
+           // else{
+                //lastScaleFactor = 0;
+           // }
+            return true;
+        }
+    }
+
+    public void applyScaleAndTranslation() {
+        layout.setScaleX(mScaleFactor);
+        layout.setScaleY(mScaleFactor);
+        layout.setTranslationX(dx);
+        layout.setTranslationX(dy);
     }
 
     public class BtnListener implements View.OnClickListener {

@@ -18,7 +18,7 @@ import com.kcl.hirus.R;
 
 import activity.MainActivity;
 
-public class SearchFragment extends Fragment implements MainActivity.OnBackpressedListener{
+public class SearchFragment extends Fragment{
     SearchView search;
     LinearLayout layout;
     private final int URL_CDC_FLAG = 0;
@@ -54,22 +54,5 @@ public class SearchFragment extends Fragment implements MainActivity.OnBackpress
             Toast.makeText(getContext(), "잘못된 접근입니다.",Toast.LENGTH_SHORT).show();
         }
         return rootView;
-    }
-
-    @Override
-    public void onBack() {
-        Log.e("etc","onBack()");
-        MainActivity activity = (MainActivity)getActivity();
-        activity.setOnBackPressedListener(null);
-        activity.tabLayout.getTabAt(0).select();
-        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
-        activity.toolbar_title.setText(activity.addressArr);
-    }
-
-    @Override
-    public void onAttach(Context context){
-        super.onAttach(context);
-        Log.e("etc","onAttach()");
-        ((MainActivity)context).setOnBackPressedListener(this);
     }
 }

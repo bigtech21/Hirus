@@ -23,7 +23,7 @@ import data.Words;
 
 
 
-public class MinigameFragment extends Fragment implements MainActivity.OnBackpressedListener{
+public class MinigameFragment extends Fragment{
     Words wg = new Words();
     EditText submitAns;
     TextView problem;
@@ -84,22 +84,5 @@ public class MinigameFragment extends Fragment implements MainActivity.OnBackpre
         int i = (int)(Math.random()*(wg.wordsAns.size()));
         problem.setText(wg.wordsAsk.get(i));;
         answerStr = wg.wordsAns.get(i);
-    }
-
-    @Override
-    public void onBack() {
-        Log.e("etc","onBack()");
-        MainActivity activity = (MainActivity)getActivity();
-        activity.setOnBackPressedListener(null);
-        activity.tabLayout.getTabAt(0).select();
-        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
-        activity.toolbar_title.setText(activity.addressArr);
-    }
-
-    @Override
-    public void onAttach(Context context){
-        super.onAttach(context);
-        Log.e("etc","onAttach()");
-        ((MainActivity)context).setOnBackPressedListener(this);
     }
 }

@@ -24,7 +24,7 @@ import java.util.Date;
 import activity.MainActivity;
 
 
-public class HotissueFragment extends Fragment implements MainActivity.OnBackpressedListener{
+public class HotissueFragment extends Fragment{
     TextView issueTitle,curTime;
     TextView[] issueses = new TextView[10];
     String[] keyWords = new String[10];
@@ -157,7 +157,7 @@ public class HotissueFragment extends Fragment implements MainActivity.OnBackpre
 
     }
 
-    @Override
+    /*@Override
     public void onBack() {
         Log.e("etc","onBack()");
 
@@ -173,6 +173,6 @@ public class HotissueFragment extends Fragment implements MainActivity.OnBackpre
         super.onAttach(context);
         Log.e("etc","onAttach()");
         ((MainActivity)context).setOnBackPressedListener(this);
-    }
+    }*/
 
 }

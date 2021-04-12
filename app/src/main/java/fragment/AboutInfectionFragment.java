@@ -27,7 +27,7 @@ import jxl.Workbook;
 import jxl.read.biff.BiffException;
 
 
-public class AboutInfectionFragment extends Fragment implements MainActivity.OnBackpressedListener {
+public class AboutInfectionFragment extends Fragment /*implements MainActivity.OnBackpressedListener*/ {
 
     private static final String TAG = "DB";
     Geocoder geocoder;
@@ -217,7 +217,7 @@ public class AboutInfectionFragment extends Fragment implements MainActivity.OnB
         }
     }
 
-    @Override
+   /* @Override
     public void onBack() {
         Log.e("etc","onBack()");
         MainActivity activity = (MainActivity)getActivity();
@@ -233,6 +233,6 @@ public class AboutInfectionFragment extends Fragment implements MainActivity.OnB
         super.onAttach(context);
         Log.e("etc","onAttach()");
         ((MainActivity)context).setOnBackPressedListener(this);
-    }
+    }*/
 }
 

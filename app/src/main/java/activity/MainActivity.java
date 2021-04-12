@@ -2,6 +2,7 @@ package activity;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.graphics.Color;
@@ -14,10 +15,12 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +42,7 @@ import java.util.List;
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
+import pl.polidea.view.ZoomView;
 
 import static java.lang.Thread.sleep;
 
@@ -416,12 +420,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            Fragment selected = null;
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
                 int id = tab.getPosition();
                 Log.d("id", id+"");
-                Fragment selected = null;
+
                 bundle.putString("color" , mainColor);
                 int col = 0;
 
@@ -452,12 +457,27 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else if(id == 4){
                     selected = wm;
+
+                    /*View v = ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.fragment_world_map,null,false);
+                    v.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT));
+
+                    ZoomView zoomView = new ZoomView(getBaseContext());
+                    zoomView.addView(v);
+                    zoomView.setMaxZoom(3f);
+                    ConstraintLayout container = findViewById(R.id.layout);
+                    container.addView(zoomView);*/
+
                     toolbar.setBackgroundColor(Color.parseColor("#dcf0fa"));
+
                 }
+                if(selected != null)
                 getSupportFragmentManager().beginTransaction().replace(R.id.layout, selected).commit();
             }
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) { }
+            public void onTabUnselected(TabLayout.Tab tab) {
+                if(selected != null)
+                getSupportFragmentManager().beginTransaction().remove(selected).commit();
+            }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) { }

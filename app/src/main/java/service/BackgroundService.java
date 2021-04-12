@@ -158,13 +158,10 @@ public class BackgroundService extends Service{
         final String strTitle = "하이러스";//getString(R.string.app_name);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, strId)
-                .setSmallIcon(R.mipmap.ic_hirus)
                .setContentText("감염병 정보를 탐색하고 있습니다.")
                 .setSmallIcon(R.drawable.hicon);
 
-               // .setContentTitle("");
-
-        Intent notiIntent = new Intent(getApplicationContext(), MainActivity.class);
+        Intent notiIntent = new Intent(getApplicationContext(), LodingActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notiIntent,0);
         builder.setContentIntent(pendingIntent);
 
@@ -231,7 +228,7 @@ public class BackgroundService extends Service{
 
 
 
-               if(beforeStr != afterStr){
+               if(!(beforeStr.trim().equals(afterStr.trim()))){
                    Log.d("background",beforeStr + " : "+afterStr);
                     NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -243,12 +240,8 @@ public class BackgroundService extends Service{
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "1")
                             .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.hicon)) //BitMap 이미지 요구
                             .setContentTitle("해당 지역의 감염병 정보입니다.")
-                           // .setContentText(text)
-                            // 더 많은 내용이라서 일부만 보여줘야 하는 경우 아래 주석을 제거하면 setContentText에 있는 문자열 대신 아래 문자열을 보여줌
-                            //.setStyle(new NotificationCompat.BigTextStyle().bigText("더 많은 내용을 보여줘야 하는 경우..."))
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                            .setContentIntent(pendingIntent); // 사용자가 노티피케이션을 탭시 ResultActivity로 이동하도록 설정
-                            //.setAutoCancel(true);
+                            .setContentIntent(pendingIntent); // 사용자가 노티피케이션을 탭시 LodingActivity로 이동하도록 설정
                     if(prefs.getString("backsetlist","").contains("소리")){
                         builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
                     }
@@ -257,11 +250,9 @@ public class BackgroundService extends Service{
                    }
 
                     NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle(builder);
-                   // inboxStyle.addLine(afterStr + "의 감염병 현황입니다.");
                    inboxStyle.addLine(bestDeseaseName);
                    inboxStyle.addLine(secondDeseaseName);
                    inboxStyle.addLine(thirdDeseaseName);
-                   Log.d("backgroundService",bestDeseaseName+secondDeseaseName+thirdDeseaseName);
 
                     //OREO API 26 이상에서는 채널 필요
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -282,8 +273,6 @@ public class BackgroundService extends Service{
 
                     assert notificationManager != null;
                     notificationManager.notify(1234, builder.build()); // 고유숫자로 노티피케이션 동작시킴
-                   //soundset(builder);//소리 띠링
-                   //setVibrate(builder); //붕
                 }
 
                 beforeStr = afterStr;

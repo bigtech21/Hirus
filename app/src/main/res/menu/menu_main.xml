@@ -6,34 +6,17 @@
 
 
 
-    ]]>
-    <item
-        android:title="설정"
-        app:showAsAction="always"
-        android:id="@+id/menu_setting"
-        android:icon="@drawable/setting_icon"/>
-    <item
-        android:title=" "
-        app:showAsAction="always" />
-    <item
-        android:title=" "
-        app:showAsAction="always" />
-    <item
-        android:title=" "
-        app:showAsAction="always" />
 
-    <item
-        android:title=" "
-        app:showAsAction="always" />
-    <item
-        android:title=" "
-        app:showAsAction="always" />
-    <item
-        android:title=" "
-        app:showAsAction="always" />
+
+    ]]>
     <item
         android:id="@+id/map_open"
         android:icon="@drawable/map_icon"
         android:title="지도 열기"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_setting"
+        android:icon="@drawable/setting_icon"
+        android:title="설정"
         app:showAsAction="always" />
 </menu>
