@@ -37,6 +37,9 @@ import fragment.FakeFragment;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import jxl.Cell;
@@ -67,9 +70,7 @@ public class MainActivity extends AppCompatActivity implements GeoInterface, Exc
     String si = null;
     String bestDeseaseName, secondDeseaseName, thirdDeseaseName;
     public String addressArr = null;
-    public static String addressstr = null;
     public String mainColor = null;
-    String[] deseases = new String[67];
 
     public boolean fragmentOn = false;
     public TabLayout tabLayout;
@@ -83,7 +84,8 @@ public class MainActivity extends AppCompatActivity implements GeoInterface, Exc
 
     int bestDesease, secondDesease, thirdDesease;
     int patientcnt, bestcnt;
-    int arr[] = new int[67];
+
+
 
     public interface OnBackpressedListener {
         void onBack();
@@ -119,25 +121,14 @@ public class MainActivity extends AppCompatActivity implements GeoInterface, Exc
         }
     }
 
-    @Override
-    public  void arrinit() {
-        for(int i = 0; i < arr.length; i++){ //초기화
-            arr[i] = 0;
-        }
-        for(int i = 0; i < deseases.length; i++){ //초기화
-            deseases[i] = "";
-        }
-    }
+
 
     @Override
     public  void getExcelData(String addr, String sii) {
         try {
             String si = sii;
-            arrinit();
-            //배열 초기화
-            for(int i = 0; i < deseases.length ; i++){
-                deseases[i] = "";
-            }
+            ArrayList<Integer> arrl = new ArrayList<Integer>();
+            ArrayList<String> deaseasess = new ArrayList<String>();
 
             int key, k, l;
             int addressPosition = 0;
@@ -161,20 +152,14 @@ public class MainActivity extends AppCompatActivity implements GeoInterface, Exc
                     for(int j = 1; j < colTotal; j++){
                         Cell iCnt = sheet.getCell(j, addressPosition); //감염병 환자 수
                         Cell DName = sheet.getCell(j, 0); //감염병 이름
-                        arr[j-1] = Integer.parseInt(iCnt.getContents());
-                        deseases[j-1] = DName.getContents();
+                        arrl.add(Integer.parseInt(iCnt.getContents()));
+                        deaseasess.add(DName.getContents());
                     }
-
-                    for(k = 1; k< arr.length; k++) { //삽입 정렬
-                        key = arr[k];
-                        for(l = k-1; l>=0 && arr[l]>key; l--) {
-                            arr[l + 1] = arr[l];
-                        }
-                        arr[l+1] = key;
-                    }
-                    bestDesease = arr[arr.length-1];
-                    secondDesease = arr[arr.length-2];
-                    thirdDesease = arr[arr.length-3];
+                    Collections.sort(arrl);
+                    Collections.reverse(arrl);
+                    bestDesease = arrl.remove(0);
+                    secondDesease = arrl.remove(0);
+                    thirdDesease = arrl.remove(0);
 
                     for(int i = 1; i < colTotal; i++){
                         Cell iCnt = sheet.getCell(i, addressPosition);
@@ -290,49 +275,54 @@ public class MainActivity extends AppCompatActivity implements GeoInterface, Exc
         copyExcelDataToDatabase(toolbar_title,str);
         bestcnt = patientcnt;
         pcnt.setText("현재 감염자 수 : " + bestcnt);
+        String col ="#800099ff";
+        int faceid = 0;
+        TextView t = findViewById(R.id.current);
+        TextView t2 = findViewById(R.id.toolbar_title);
+        TextView t3 = findViewById(R.id.BestDesease);
+        TextView t4 = findViewById(R.id.patientcnt);
         if(bestcnt >=1 && bestcnt <10){
-            tv.setBackgroundColor(Color.parseColor("#800099ff"));
-            cur.setBackgroundColor(Color.parseColor("#800099ff"));
-            lo.setBackgroundColor(Color.parseColor("#800099ff"));
-            toolbar.setBackgroundColor(Color.parseColor("#800099ff"));
+            col = "#800099ff";
+            faceid = R.drawable.smile;
+
+            t.setTextColor(Color.parseColor("#000000"));
+            t2.setTextColor(Color.parseColor("#000000"));
+            t3.setTextColor(Color.parseColor("#000000"));
+            t4.setTextColor(Color.parseColor("#000000"));
             tv.setTextColor(Color.parseColor("#000000"));
             mainColor = "800099ff";
-            iv.setImageResource(R.drawable.smile);
         }
         else if(bestcnt >=10 && bestcnt <50){
-            tv.setBackgroundColor(Color.parseColor("#80FFff33"));
-            cur.setBackgroundColor(Color.parseColor("#80FFff33"));
-            lo.setBackgroundColor(Color.parseColor("#80FFff33"));
-            toolbar.setBackgroundColor(Color.parseColor("#80FFff33"));
+            col = "#80FFff33";
+            faceid = R.drawable.nonsmile;
             tv.setTextColor(Color.parseColor("#000000"));
+            t.setTextColor(Color.parseColor("#000000"));
+            t2.setTextColor(Color.parseColor("#000000"));
+            t3.setTextColor(Color.parseColor("#000000"));
+            t4.setTextColor(Color.parseColor("#000000"));
             mainColor = "80FFff33";
-            iv.setImageResource(R.drawable.nonsmile);
         }
         else if(bestcnt >=50 && bestcnt <100){
-            tv.setBackgroundColor(Color.parseColor("#80FF9933"));
-            cur.setBackgroundColor(Color.parseColor("#80FF9933"));
-            lo.setBackgroundColor(Color.parseColor("#80FF9933"));
-            toolbar.setBackgroundColor(Color.parseColor("#80FF9933"));
+            col = "#80FF9933";
+            faceid = R.drawable.unsmile;
             mainColor = "80FF9933";
-            iv.setImageResource(R.drawable.unsmile);
         }
         else if(bestcnt >=100){
-            tv.setBackgroundColor(Color.parseColor("#ff8282"));
-            cur.setBackgroundColor(Color.parseColor("#ff8282"));
-            lo.setBackgroundColor(Color.parseColor("#ff8282"));
-            toolbar.setBackgroundColor(Color.parseColor("#ff8282"));
+            col = "#ff8282";
+            faceid = R.drawable.die;
             mainColor = "#ff8282";
-            iv.setImageResource(R.drawable.die);
         }
         else{
-            tv.setBackgroundColor(Color.parseColor("#8099FF99"));
-            cur.setBackgroundColor(Color.parseColor("#8099FF99"));
-            lo.setBackgroundColor(Color.parseColor("#8099FF99"));
-            toolbar.setBackgroundColor(Color.parseColor("#8099FF99"));
+            col = "#8099FF99";
+            faceid = R.drawable.ssmile;
             mainColor = "8099FF99";
-            iv.setImageResource(R.drawable.ssmile);
         }
-
+        tv.setBackgroundColor(Color.parseColor(col));
+        cur.setBackgroundColor(Color.parseColor(col));
+        lo.setBackgroundColor(Color.parseColor(col));
+        Log.d("dd", String.valueOf(fragmentOn));
+        toolbar.setBackgroundColor(Color.parseColor(col));
+        iv.setImageResource(faceid);
     }
 
 
@@ -381,8 +371,6 @@ public class MainActivity extends AppCompatActivity implements GeoInterface, Exc
 
         toolbar_title.setText(addressArr);
 
-        addressstr = addressArr;
-
         getExcelData(do_,si);
 
         human1.setText(bestDeseaseName);
@@ -424,8 +412,6 @@ public class MainActivity extends AppCompatActivity implements GeoInterface, Exc
         Log.d("!!!!","Resume1");
 
         toolbar_title.setText(addressArr);
-
-        addressstr = addressArr;
 
         getExcelData(do_,si);
 
@@ -483,6 +469,9 @@ public class MainActivity extends AppCompatActivity implements GeoInterface, Exc
                 }
                 if(selected != null)
                 getSupportFragmentManager().beginTransaction().replace(R.id.layout, selected).commit();
+
+                if(id!=0) fragmentOn=false;
+                else fragmentOn = true;
             }
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
@@ -557,16 +546,8 @@ public class MainActivity extends AppCompatActivity implements GeoInterface, Exc
     }
 
     public void onFragmentChanged(int id){
-
-        if(id == 0){ getSupportFragmentManager().beginTransaction().replace(R.id.layout, non).commit(); }
-        else if(id ==R.id.inf_search_fr){ getSupportFragmentManager().beginTransaction().replace(R.id.layout, is).commit(); }
-        else if (id == 2){ getSupportFragmentManager().beginTransaction().replace(R.id.layout, hi).commit(); }
-        else if( id == 3){ getSupportFragmentManager().beginTransaction().replace(R.id.layout, mg).commit(); }
-        else if(id == 4) { getSupportFragmentManager().beginTransaction().replace(R.id.layout, wm).commit(); }
-        else if(id == R.id.AboutInfection_fr){
-            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right).replace(R.id.layout, ai).commit();
-            fragmentOn = true;
-        }
+        if(id == R.id.AboutInfection_fr)
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right).replace(R.id.layout,ai).commit();
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item){

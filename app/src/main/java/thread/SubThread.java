@@ -31,11 +31,11 @@ public class SubThread extends Thread{
         while(true) {
             try {
                 Log.d("SubThread","run");
-                sleep(10000);
                 optioncheck();
                 if(!(prefs.getString("backsetlist","").equals("사용 안함"))) {
                     serviceRun();
                 }
+                sleep(10000);
             } catch (InterruptedException e) {
                 Log.d("SubThread","intrrupted");
                 e.printStackTrace();

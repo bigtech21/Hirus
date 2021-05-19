@@ -31,19 +31,17 @@ public class GpsTrackerService extends Service implements LocationListener {
 
 
     public Location getLocation() {
-        Log.d("##", "생성자 겟로케이션");
         try {
-            Log.d("##", "1");
             locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
+            Log.d("gt","겟로케이션");
 
             boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
             if (!isGPSEnabled && !isNetworkEnabled) {
-                Log.d("##", "2");
-
+                Log.d("gt","1");
             } else {
-                Log.d("##", "3");
+                Log.d("gt","2");
                 int hasFineLocationPermission = ContextCompat.checkSelfPermission(mContext,
                         Manifest.permission.ACCESS_FINE_LOCATION);
                 int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(mContext,
@@ -52,18 +50,20 @@ public class GpsTrackerService extends Service implements LocationListener {
 
                 if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
                         hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("gt","3");
                 } else
                     return null;
 
                 if (isNetworkEnabled) {
                     locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-
+                    Log.d("gt","4");
                     if (locationManager != null)
                     {
                         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                        Log.d("gt","5");
                         if (location != null)
                         {
-                            Log.d("##", "4");
+                            Log.d("gt","6");
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
                         }
@@ -72,13 +72,15 @@ public class GpsTrackerService extends Service implements LocationListener {
 
                 if (isGPSEnabled)
                 {
+                    Log.d("gt","7");
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                     if (locationManager != null)
                     {
+                        Log.d("gt","8");
                         location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                         if (location != null)
                         {
-                            Log.d("##", "5");
+                            Log.d("gt","9");
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
                         }
@@ -88,7 +90,7 @@ public class GpsTrackerService extends Service implements LocationListener {
         }
         catch (Exception e)
         {
-            Log.d("@@@", ""+e.toString());
+            e.printStackTrace();
         }
 
         return location;

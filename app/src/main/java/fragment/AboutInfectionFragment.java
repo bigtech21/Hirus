@@ -77,11 +77,6 @@ public class AboutInfectionFragment extends Fragment implements MainActivity.OnB
     }
 
     @Override
-    public void arrinit() {
-
-    }
-
-    @Override
     public void getExcelData(String addr, String addr2) {
 
     }
@@ -216,6 +211,7 @@ public class AboutInfectionFragment extends Fragment implements MainActivity.OnB
 
     @Override
     public void reverseCoding(){
+
         List<Address> list = null;
         try {
             list = geocoder.getFromLocation(latitude, longitude, 10); // 위도, 경도, 얻어올 값의 개수
@@ -241,7 +237,7 @@ public class AboutInfectionFragment extends Fragment implements MainActivity.OnB
         try {
             ((MainActivity) getContext()).setOnBackPressedListener(null);
             activity.tabLayout.getTabAt(0).select();
-            getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+            getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_right).remove(this).commit();
             activity.toolbar_title.setText(activity.addressArr);
         }
         catch(Exception e){}

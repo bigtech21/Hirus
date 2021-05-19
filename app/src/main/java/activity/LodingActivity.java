@@ -56,6 +56,7 @@ public class LodingActivity extends AppCompatActivity implements GeoInterface , 
     private BackgroundService backgroundService;
     private FusedLocationProviderClient mFusedLocationClient;
     LocationRequest locationRequest;
+    public static String addstr = null;
 
      String str_Title = null;
      String addressArr = null;
@@ -66,7 +67,7 @@ public class LodingActivity extends AppCompatActivity implements GeoInterface , 
 
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
-    String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.INTERNET};
+    String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.INTERNET,Manifest.permission.ACCESS_BACKGROUND_LOCATION};
 
     private  boolean checkPermissions() {
 
@@ -76,10 +77,14 @@ public class LodingActivity extends AppCompatActivity implements GeoInterface , 
                 Manifest.permission.ACCESS_COARSE_LOCATION);
         int hasInternetPermission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.INTERNET);
+        int hasBackgroundPermission = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION);
 
         if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
                 hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED&&
-                hasInternetPermission == PackageManager.PERMISSION_GRANTED) {
+                hasInternetPermission == PackageManager.PERMISSION_GRANTED&&
+                hasBackgroundPermission == PackageManager.PERMISSION_GRANTED
+        ) {
             return true;
         }
         return false;
@@ -125,7 +130,8 @@ public class LodingActivity extends AppCompatActivity implements GeoInterface , 
                 // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
 
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])
-                        || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[1])) {
+                        || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[1])
+                 || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[3])) {
 
 
                     // 사용자가 거부만 선택한 경우에는 앱을 다시 실행하여 허용을 선택하면 앱을 사용할 수 있습니다.
@@ -183,11 +189,14 @@ public class LodingActivity extends AppCompatActivity implements GeoInterface , 
                     Manifest.permission.ACCESS_FINE_LOCATION);
             int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_COARSE_LOCATION);
+            int hasBackgroundPermission = ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION);
 
 
 
             if (hasFineLocationPermission != PackageManager.PERMISSION_GRANTED ||
-                    hasCoarseLocationPermission != PackageManager.PERMISSION_GRANTED   ) {
+                    hasCoarseLocationPermission != PackageManager.PERMISSION_GRANTED||
+                    hasBackgroundPermission != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
 
@@ -235,9 +244,7 @@ public class LodingActivity extends AppCompatActivity implements GeoInterface , 
         if(checkPermissions()){
 
 
-            if ((prefs.getString("backsetlist", "").equals("사용 안함"))) {
-
-            } else {
+            if (!(prefs.getString("backsetlist", "").equals("사용 안함"))) {
                 if(!BootReceiver.isServiceRunning(getApplicationContext(),backgroundService.getClass())) {
                     startService();
                 }
@@ -317,7 +324,6 @@ public class LodingActivity extends AppCompatActivity implements GeoInterface , 
             list = geocoder.getFromLocation(latitude, longitude, 10); // 위도, 경도, 얻어올 값의 개수
 
         } catch (IOException e) {
-            //e.printStackTrace();
             reverseCoding();
             Log.e("test", "입출력 오류 - 서버에서 주소변환시 에러발생");
         }
@@ -328,6 +334,7 @@ public class LodingActivity extends AppCompatActivity implements GeoInterface , 
                 String cut[] = list.get(0).toString().split(" ");
                 str_Title = cut[1] + " " + cut[2] + " " + cut[3];
                 addressArr = cut[1] + " " + cut[2] + " " + cut[3];
+                addstr = addressArr;
                do_ = cut[2];
                si = cut[3];
             }

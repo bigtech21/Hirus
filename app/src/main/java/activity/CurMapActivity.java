@@ -50,6 +50,8 @@ import com.kcl.hirus.R;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -70,13 +72,9 @@ public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallb
 
     private static final String TAG = "현재위치";
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
-    private static final int UPDATE_INTERVAL_MS = 1000;
-    private static final int FATEST_UPDATE_INTERVAL_MS = 500;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     boolean needRequest = false;
 
-    private long doubleClickTime;
-    int arr[] = new int[67];
     int bestDesease;
     int secondDesease;
     int thirdDesease;
@@ -85,7 +83,6 @@ public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallb
 
     String secondDeseaseName;
     String thirdDeseaseName;
-    String[] deseases = new String[67];
 
     public static double curlatitude = 0;
     public static double curlongitude = 0;
@@ -97,24 +94,12 @@ public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallb
 
     Location mCurrentLocatiion;
     LatLng currentPosition;
-    LatLng selectedPosition;
 
     private View mLayout;
     private Location location;
     GeoVariableData geoVariable;
 
     LocationRequest locationRequest;
-
-    @Override
-    public void arrinit() {
-        for (int i = 0; i < arr.length; i++) { //초기화
-            arr[i] = 0;
-        }
-        for (int i = 0; i < deseases.length; i++) { //초기화
-            deseases[i] = "";
-        }
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,28 +116,20 @@ public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallb
         try {
             is = getApplicationContext().getResources().getAssets().open("database.xls");
             wb = Workbook.getWorkbook(is);
-        } catch (IOException | BiffException e) {
-            e.printStackTrace();
         }
+        catch (IOException | BiffException e) { e.printStackTrace(); }
 
 
-        locationRequest = new LocationRequest()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                //.setInterval(UPDATE_INTERVAL_MS)
-                //.setFastestInterval(FATEST_UPDATE_INTERVAL_MS);
+        locationRequest = new LocationRequest().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-
-        LocationSettingsRequest.Builder builder =
-                new LocationSettingsRequest.Builder();
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
 
         builder.addLocationRequest(locationRequest);
-
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
 
-       SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+       SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
@@ -250,14 +227,9 @@ public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallb
     public  void getExcelData(String addr, String sii) {
         try {
             String si = sii;
-            arrinit();
-            //배열 초기화
-            for(int i = 0; i < deseases.length ; i++){
-                deseases[i] = "";
-            }
-
-            int key, k, l;
+            ArrayList<Integer> arrl = new ArrayList<Integer>();
             int addressPosition = 0;
+
             if(wb != null){
                 Sheet sheet = wb.getSheet(0);
                 if(sheet != null){
@@ -276,21 +248,14 @@ public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallb
 
                     for(int j = 1; j < colTotal; j++){
                         Cell iCnt = sheet.getCell(j, addressPosition); //감염병 환자 수
-                        Cell DName = sheet.getCell(j, 0); //감염병 이름
-                        arr[j-1] = Integer.parseInt(iCnt.getContents());
-                        deseases[j-1] = DName.getContents();
+                        arrl.add(Integer.parseInt(iCnt.getContents()));
                     }
 
-                    for(k = 1; k< arr.length; k++) { //삽입 정렬
-                        key = arr[k];
-                        for(l = k-1; l>=0 && arr[l]>key; l--) {
-                            arr[l + 1] = arr[l];
-                        }
-                        arr[l+1] = key;
-                    }
-                    bestDesease = arr[arr.length-1];
-                    secondDesease = arr[arr.length-2];
-                    thirdDesease = arr[arr.length-3];
+                    Collections.sort(arrl);
+                    Collections.reverse(arrl);
+                    bestDesease = arrl.remove(0);
+                    secondDesease = arrl.remove(0);
+                    thirdDesease = arrl.remove(0);
 
                     for(int i = 1; i < colTotal; i++){
                         Cell iCnt = sheet.getCell(i, addressPosition);
@@ -323,9 +288,7 @@ public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallb
     }
 
     @Override
-    public void getData() {
-
-    }
+    public void getData() { }
 
     LocationCallback locationCallback = new LocationCallback() {
         @Override

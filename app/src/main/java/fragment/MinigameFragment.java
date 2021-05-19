@@ -65,10 +65,12 @@ public class MinigameFragment extends Fragment implements MainActivity.OnBackpre
                         editor.commit();
                         scoreText.setText(scoreStr + score);
                         setProblem();
+                        submitAns.setText("");
 
                     } else {
                         Toast.makeText(getContext(), "오답입니다...", Toast.LENGTH_SHORT).show();
                         setProblem();
+                        submitAns.setText("");
                     }
                 }catch (NullPointerException e){
                     e.printStackTrace();
