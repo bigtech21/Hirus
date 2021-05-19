@@ -8,7 +8,6 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,25 +15,24 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.kcl.hirus.R;
 
 import java.io.InputStream;
 import java.util.Vector;
 
+import Interface.ExcelInterface;
 import activity.MainActivity;
 import jxl.Sheet;
 import jxl.Workbook;
-import pl.polidea.view.ZoomView;
 
 
-public class WorldmapFragment extends Fragment{
+public class WorldmapFragment extends Fragment implements MainActivity.OnBackpressedListener, ExcelInterface {
 
     HorizontalScrollView scrollView;
     AlertDialog.Builder a;
@@ -48,7 +46,7 @@ public class WorldmapFragment extends Fragment{
     private static final float MIN_ZOOM = 1.0f;
     private static final float MAX_ZOOM = 2.0f;
 
-    int zoomcnt = 0;
+    int zoomCnt = 0;
 
     int[] countriesID = {R.id.CA, R.id.US, R.id.GL, R.id.MX, R.id.GT, //~4
             R.id.HD, R.id.ELS, R.id.BLZ, R.id.NCG, R.id.CR, R.id.PNM, R.id.CB, R.id.VZ, R.id.ECD, R.id.PR, //~14
@@ -111,6 +109,7 @@ public class WorldmapFragment extends Fragment{
                 return false;
             }
         });
+
 
         countryTouchListener = new CountryTouchListener();
 
@@ -175,6 +174,27 @@ public class WorldmapFragment extends Fragment{
         return rootview;
     }
 
+    @Override
+    public void arrinit() {
+
+    }
+
+    @Override
+    public void getExcelData(String addr, String addr2) {
+
+    }
+
+    @Override
+    public int selectDesease(String desease) {
+        return 0;
+    }
+
+    @Override
+    public String copyExcelDataToDatabase(TextView address, String desease) {
+        return null;
+    }
+
+    @Override
     public void getData() {
         try {
             InputStream is = getResources().getAssets().open("corona.xls");
@@ -196,6 +216,26 @@ public class WorldmapFragment extends Fragment{
             }
 
         }catch (Exception e){e.printStackTrace();}
+    }
+
+    @Override
+    public void onBack() {
+        MainActivity activity = (MainActivity)getActivity();
+        try {
+            ((MainActivity) getContext()).setOnBackPressedListener(null);
+            activity.tabLayout.getTabAt(0).select();
+            getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+            activity.toolbar_title.setText(activity.addressArr);
+        }
+        catch(Exception e){
+            getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+        }
+    }
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        ((MainActivity)context).setOnBackPressedListener(this);
     }
 
     class CountryTouchListener implements View.OnClickListener {
@@ -707,36 +747,27 @@ public class WorldmapFragment extends Fragment{
         }
 
         @Override
-        public void onScaleEnd(ScaleGestureDetector detector) {
-
-        }
+        public void onScaleEnd(ScaleGestureDetector detector) { }
 
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             float scaleFactor = detector.getScaleFactor();
-            //if (/*lastScaleFactor == 0 || (Math.signum(scaleFactor) == Math.signum(lastScaleFactor))*/) {
-                zoomcnt++;
-                if(zoomcnt > 1) {
-                    zoomcnt = 0;
+                zoomCnt++;
+                if(zoomCnt > 1) {
+                    zoomCnt = 0;
                     mScaleFactor *= scaleFactor;
                     mScaleFactor = Math.max(MIN_ZOOM, Math.min(mScaleFactor, MAX_ZOOM));
                     lastScaleFactor = scaleFactor;
                     applyScaleAndTranslation();
-                    Log.d("scale", mScaleFactor + " " + lastScaleFactor);
                 }
-           // }
-           // else{
-                //lastScaleFactor = 0;
-           // }
             return true;
         }
     }
 
     public void applyScaleAndTranslation() {
-        layout.setScaleX(mScaleFactor);
-        layout.setScaleY(mScaleFactor);
-        layout.setTranslationX(dx);
-        layout.setTranslationX(dy);
+        Log.d("scale",mScaleFactor+"");
+        scrollView.setScaleX(mScaleFactor);
+        scrollView.setScaleY(mScaleFactor);
     }
 
     public class BtnListener implements View.OnClickListener {

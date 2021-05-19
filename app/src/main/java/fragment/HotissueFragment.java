@@ -24,7 +24,7 @@ import java.util.Date;
 import activity.MainActivity;
 
 
-public class HotissueFragment extends Fragment{
+public class HotissueFragment extends Fragment implements MainActivity.OnBackpressedListener{
     TextView issueTitle,curTime;
     TextView[] issueses = new TextView[10];
     String[] keyWords = new String[10];
@@ -33,7 +33,10 @@ public class HotissueFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_hotissue, container, false);
+        View rootView;
+        try{ rootView = inflater.inflate(R.layout.fragment_hotissue, container, false); }
+        catch (Exception e){ rootView = inflater.inflate(R.layout.fragment_hotissue, container, false); }
+
         issueTitle = rootView.findViewById(R.id.issueTitle);
         issueses[0] = rootView.findViewById(R.id.one);
         issueses[1] = rootView.findViewById(R.id.two);
@@ -123,7 +126,7 @@ public class HotissueFragment extends Fragment{
         public void run() {
                 try
                 {
-                    Document doc = Jsoup.connect("http://www.cdc.go.kr/search/search.es?mid=a20101000000")
+                    Document doc = Jsoup.connect("http://www.kdca.go.kr/search/search.es?mid=a20101000000")
                             .get();
                     Elements title = doc.select("article.box_keyword");
 
@@ -157,22 +160,22 @@ public class HotissueFragment extends Fragment{
 
     }
 
-    /*@Override
+    @Override
     public void onBack() {
-        Log.e("etc","onBack()");
-
         MainActivity activity = (MainActivity)getActivity();
-        activity.setOnBackPressedListener(null);
-        activity.tabLayout.getTabAt(0).select();
-        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
-        activity.toolbar_title.setText(activity.addressArr);
+        try {
+            ((MainActivity) getContext()).setOnBackPressedListener(null);
+            activity.tabLayout.getTabAt(0).select();
+            getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+            activity.toolbar_title.setText(activity.addressArr);
+        }
+        catch(Exception e){}
     }
 
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
-        Log.e("etc","onAttach()");
         ((MainActivity)context).setOnBackPressedListener(this);
-    }*/
+    }
 
 }

@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +18,12 @@ import com.kcl.hirus.R;
 
 
 import activity.MainActivity;
-import data.Words;
+import data.WordsData;
 
 
 
-public class MinigameFragment extends Fragment{
-    Words wg = new Words();
+public class MinigameFragment extends Fragment implements MainActivity.OnBackpressedListener {
+    WordsData wg = new WordsData();
     EditText submitAns;
     TextView problem;
     TextView scoreText;
@@ -84,5 +83,23 @@ public class MinigameFragment extends Fragment{
         int i = (int)(Math.random()*(wg.wordsAns.size()));
         problem.setText(wg.wordsAsk.get(i));;
         answerStr = wg.wordsAns.get(i);
+    }
+
+    @Override
+    public void onBack() {
+        MainActivity activity = (MainActivity)getActivity();
+        try {
+            ((MainActivity) getContext()).setOnBackPressedListener(null);
+            activity.tabLayout.getTabAt(0).select();
+            getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+            activity.toolbar_title.setText(activity.addressArr);
+        }
+        catch(Exception e){}
+    }
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        ((MainActivity)context).setOnBackPressedListener(this);
     }
 }

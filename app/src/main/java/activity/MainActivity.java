@@ -2,7 +2,7 @@ package activity;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import android.graphics.Color;
@@ -15,17 +15,17 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 
+import Interface.ExcelInterface;
+import Interface.GeoInterface;
 import fragment.AboutInfectionFragment;
 import fragment.MinigameFragment;
 import com.kcl.hirus.R;
@@ -42,11 +42,9 @@ import java.util.List;
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
-import pl.polidea.view.ZoomView;
+import service.GpsTrackerService;
 
-import static java.lang.Thread.sleep;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements GeoInterface, ExcelInterface, ActivityCompat.OnRequestPermissionsResultCallback {
 
     SearchFragment is = new SearchFragment();
     HotissueFragment hi = new HotissueFragment();
@@ -87,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
     int patientcnt, bestcnt;
     int arr[] = new int[67];
 
-
     public interface OnBackpressedListener {
         void onBack();
     }
@@ -122,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
     public  void arrinit() {
         for(int i = 0; i < arr.length; i++){ //초기화
             arr[i] = 0;
@@ -131,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
     public  void getExcelData(String addr, String sii) {
         try {
             String si = sii;
@@ -197,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
         }catch (Exception e){e.printStackTrace();}
     }
 
+    @Override
     public  int selectDesease(String desease) { //AboutInfection 클래스에서 사용
         try {
             if(wb != null){
@@ -219,7 +219,8 @@ public class MainActivity extends AppCompatActivity {
         return 0;
     }
 
-    public void copyExcelDataToDatabase(TextView address, String desease) {
+    @Override
+    public String copyExcelDataToDatabase(TextView address, String desease) {
 
         String addresses = null;
         String newaddress[] = null;
@@ -259,6 +260,12 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
+    }
+
+    @Override
+    public void getData() {
+
     }
 
     public void setColor(TextView tv) {
@@ -329,6 +336,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -347,7 +355,6 @@ public class MainActivity extends AppCompatActivity {
         cur = findViewById(R.id.current);
 
         Log.d("dd",addressArr + longitude + latitude + do_ + si);
-        //gpsTracker = new GpsTracker(this);
 
         human1 = (TextView) findViewById(R.id.BestDesease);
         human2 = (TextView) findViewById(R.id.Human2);
@@ -372,8 +379,24 @@ public class MainActivity extends AppCompatActivity {
         human2.setOnClickListener(new MyClickListener());
         human3.setOnClickListener(new MyClickListener());
 
+        toolbar_title.setText(addressArr);
+
+        addressstr = addressArr;
+
+        getExcelData(do_,si);
+
+        human1.setText(bestDeseaseName);
+        setMainColor(cur,toolbar_title,human1,toolbar,face,pcnt);
+
+        human2.setText(secondDeseaseName);
+        setColor(human2);
+
+        human3.setText(thirdDeseaseName);
+        setColor(human3);
+
     }
 
+    @Override
     public void reverseCoding() {
         List<Address> list = null;
         try {
@@ -407,15 +430,12 @@ public class MainActivity extends AppCompatActivity {
         getExcelData(do_,si);
 
         human1.setText(bestDeseaseName);
-
         setMainColor(cur,toolbar_title,human1,toolbar,face,pcnt);
 
         human2.setText(secondDeseaseName);
-
         setColor(human2);
 
         human3.setText(thirdDeseaseName);
-
         setColor(human3);
 
 
@@ -458,15 +478,6 @@ public class MainActivity extends AppCompatActivity {
                 else if(id == 4){
                     selected = wm;
 
-                    /*View v = ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.fragment_world_map,null,false);
-                    v.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT));
-
-                    ZoomView zoomView = new ZoomView(getBaseContext());
-                    zoomView.addView(v);
-                    zoomView.setMaxZoom(3f);
-                    ConstraintLayout container = findViewById(R.id.layout);
-                    container.addView(zoomView);*/
-
                     toolbar.setBackgroundColor(Color.parseColor("#dcf0fa"));
 
                 }
@@ -475,8 +486,7 @@ public class MainActivity extends AppCompatActivity {
             }
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                if(selected != null)
-                getSupportFragmentManager().beginTransaction().remove(selected).commit();
+                setOnBackPressedListener(null);
             }
 
             @Override
@@ -487,13 +497,21 @@ public class MainActivity extends AppCompatActivity {
         LocationListener mLocationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 //여기서 위치값이 갱신되면 이벤트가 발생한다.
+                GpsTrackerService gpsTracker = new GpsTrackerService(getApplicationContext());
+                latitude = gpsTracker.getLatitude();
+                longitude = gpsTracker.getLongitude();
+                geocoder = new Geocoder(getApplicationContext());
+
                 reverseCoding();
                 getExcelData(do_, si);
                 toolbar_title.setText(addressArr);
                 human1.setText(bestDeseaseName);
+                setMainColor(cur,toolbar_title,human1,toolbar,face,pcnt);
                 human2.setText(secondDeseaseName);
+                setColor(human2);
                 human3.setText(thirdDeseaseName);
-                Log.d("Main", "onLocationChanged, location:" + location + "address : "+do_ + " " + si);
+                setColor(human3);
+
             }
 
             public void onProviderDisabled(String provider) {
@@ -539,29 +557,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onFragmentChanged(int id){
-        Fragment lastFragment = non;
-        if(id == 0){
-            //toolbar.setBackgroundColor(human1);
-            getSupportFragmentManager().beginTransaction().replace(R.id.layout, non).commit();
-        }
-        else if(id ==R.id.inf_search_fr){
-            lastFragment = is;
-            getSupportFragmentManager().beginTransaction().replace(R.id.layout, is).commit();
-        }
-        else if (id == 2){
-            lastFragment = hi;
-            getSupportFragmentManager().beginTransaction().replace(R.id.layout, hi).commit();
-        }
-        else if( id == 3){
-            lastFragment = mg;
-            getSupportFragmentManager().beginTransaction().replace(R.id.layout, mg).commit();
-        }
-        else if(id == 4) {
-            lastFragment = wm;
-            getSupportFragmentManager().beginTransaction().replace(R.id.layout, wm).commit();
-        }
+
+        if(id == 0){ getSupportFragmentManager().beginTransaction().replace(R.id.layout, non).commit(); }
+        else if(id ==R.id.inf_search_fr){ getSupportFragmentManager().beginTransaction().replace(R.id.layout, is).commit(); }
+        else if (id == 2){ getSupportFragmentManager().beginTransaction().replace(R.id.layout, hi).commit(); }
+        else if( id == 3){ getSupportFragmentManager().beginTransaction().replace(R.id.layout, mg).commit(); }
+        else if(id == 4) { getSupportFragmentManager().beginTransaction().replace(R.id.layout, wm).commit(); }
         else if(id == R.id.AboutInfection_fr){
-            lastFragment = ai;
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right).replace(R.id.layout, ai).commit();
             fragmentOn = true;
         }

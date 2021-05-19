@@ -16,6 +16,7 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -26,13 +27,14 @@ import java.io.InputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import Interface.ExcelInterface;
 import activity.LodingActivity;
 import activity.MainActivity;
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 
-public class BackgroundService extends Service{
+public class BackgroundService extends Service implements ExcelInterface {
    private final static String TAG = BackgroundService.class.getSimpleName();
 
    private Context context = null;
@@ -44,6 +46,7 @@ public class BackgroundService extends Service{
     int bestDesease;
     int secondDesease;
     int thirdDesease;
+
     String[] deseases = new String[67];
     int arr[] = new int[67];
     String bestDeseaseName;
@@ -73,6 +76,7 @@ public class BackgroundService extends Service{
         }
     }
 
+    @Override
     public void getExcelData(String addr, String sii) {
         try {
             String si = sii;
@@ -141,6 +145,21 @@ public class BackgroundService extends Service{
     }
 
     @Override
+    public int selectDesease(String desease) {
+        return 0;
+    }
+
+    @Override
+    public String copyExcelDataToDatabase(TextView address, String desease) {
+        return null;
+    }
+
+    @Override
+    public void getData() {
+
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
         //최초 한번만 호출
@@ -167,11 +186,6 @@ public class BackgroundService extends Service{
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            /*NotificationChannel channel = notificationManager.getNotificationChannel(strId);
-            if (channel == null) {
-                channel = new NotificationChannel(strId, strTitle, NotificationManager.IMPORTANCE_MIN);
-                notificationManager.createNotificationChannel(channel);
-            }*/
             notificationManager.createNotificationChannel(new NotificationChannel(strId,strTitle,NotificationManager.IMPORTANCE_MIN));
         }
         startForeground(1, builder.build());
@@ -220,6 +234,8 @@ public class BackgroundService extends Service{
                 if(beforeStr == null){
                     beforeStr = afterStr;
                 }
+
+                Log.i("Background",beforeStr + " " + afterStr);
 
                 if(afterStr !=null) {
                     String arr[] = afterStr.split(" ");

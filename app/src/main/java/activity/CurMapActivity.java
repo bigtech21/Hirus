@@ -43,7 +43,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.snackbar.Snackbar;
-import data.GeoVariable;
+
+import Interface.ExcelInterface;
+import data.GeoVariableData;
 import com.kcl.hirus.R;
 
 import java.io.IOException;
@@ -58,7 +60,7 @@ import jxl.read.biff.BiffException;
 
 import static java.lang.Math.abs;
 
-public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
+public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, ExcelInterface {
 
     private GoogleMap mMap;
 
@@ -71,21 +73,6 @@ public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallb
     private static final int UPDATE_INTERVAL_MS = 1000;
     private static final int FATEST_UPDATE_INTERVAL_MS = 500;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
-
-    //두 손가락사이 xy값 받아오는 변수
-    private double touch_interval_X = 0;
-    private double touch_interval_Y = 0;
-
-    private float mScaleFactor = 1.0f;
-
-
-    private int zoom_in_count = 0;
-    private int zoom_in_out = 0;
-    private int touch_zoom = 0;
-
-    ScaleGestureDetector scaleGestureDetector;
-
-
     boolean needRequest = false;
 
     private long doubleClickTime;
@@ -114,10 +101,11 @@ public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallb
 
     private View mLayout;
     private Location location;
-    GeoVariable geoVariable;
+    GeoVariableData geoVariable;
 
     LocationRequest locationRequest;
 
+    @Override
     public void arrinit() {
         for (int i = 0; i < arr.length; i++) { //초기화
             arr[i] = 0;
@@ -132,7 +120,7 @@ public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallb
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        geoVariable = new GeoVariable();
+        geoVariable = new GeoVariableData();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -173,15 +161,8 @@ public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallb
         Log.d(TAG, "onMapReady :");
 
         mMap = googleMap;
-
-        //런타임 퍼미션 요청 대화상자나 GPS 활성 요청 대화상자 보이기전에
-        //지도의 초기위치를 서울로 이동
         setDefaultLocation();
 
-
-
-        //런타임 퍼미션 처리
-        // 1. 위치 퍼미션을 가지고 있는지 체크합니다.
         int hasFineLocationPermission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(this,
@@ -192,26 +173,15 @@ public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallb
         if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
                 hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED   ) {
 
-            // 2. 이미 퍼미션을 가지고 있다면
-            // ( 안드로이드 6.0 이하 버전은 런타임 퍼미션이 필요없기 때문에 이미 허용된 걸로 인식합니다.)
+            startLocationUpdates();
 
-
-            startLocationUpdates(); // 3. 위치 업데이트 시작
-
-
-        }else {  //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
-
-            // 3-1. 사용자가 퍼미션 거부를 한 적이 있는 경우에는
+        }else {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])) {
-
-                // 3-2. 요청을 진행하기 전에 사용자가에게 퍼미션이 필요한 이유를 설명해줄 필요가 있습니다.
                 Snackbar.make(mLayout, "이 앱을 실행하려면 위치 접근 권한이 필요합니다.",
                         Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
 
                     @Override
                     public void onClick(View view) {
-
-                        // 3-3. 사용자게에 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.
                         ActivityCompat.requestPermissions( CurMapActivity.this, REQUIRED_PERMISSIONS,
                                 PERMISSIONS_REQUEST_CODE);
                     }
@@ -219,8 +189,6 @@ public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallb
 
 
             } else {
-                // 4-1. 사용자가 퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청을 바로 합니다.
-                // 요청 결과는 onRequestPermissionResult에서 수신됩니다.
                 ActivityCompat.requestPermissions( this, REQUIRED_PERMISSIONS,
                         PERMISSIONS_REQUEST_CODE);
             }
@@ -266,12 +234,11 @@ public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallb
 
                String str =  getCurrentAddress(latLng);
                String address[] = str.split(" ");
-
                getExcelData(address[1], address[2]);
 
                 String markerTitle = (address[1]+" " + address[2] + "의 감염병 현황\n");
-                String markerSnippet = bestDeseaseName+" : "+bestDesease+"\n"+ secondDeseaseName+" : "+secondDesease+"\n"+ thirdDeseaseName+" : "+thirdDesease+"";
-
+                String markerSnippet = bestDeseaseName+" : "+bestDesease+"\n"+ secondDeseaseName+" : "
+                        +secondDesease+"\n"+ thirdDeseaseName+" : "+thirdDesease+"";
 
                 addNewMarker(latLng, markerTitle, markerSnippet);
                 Log.d( TAG, "onMapClick :");
@@ -279,7 +246,7 @@ public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallb
         });
     }
 
-    //row 증가 = 세로로, col증가 = 가로로
+    @Override
     public  void getExcelData(String addr, String sii) {
         try {
             String si = sii;
@@ -345,6 +312,21 @@ public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallb
         }catch (Exception e){e.printStackTrace();}
     }
 
+    @Override
+    public int selectDesease(String desease) {
+        return 0;
+    }
+
+    @Override
+    public String copyExcelDataToDatabase(TextView address, String desease) {
+        return null;
+    }
+
+    @Override
+    public void getData() {
+
+    }
+
     LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -368,7 +350,7 @@ public class CurMapActivity extends AppCompatActivity implements OnMapReadyCallb
 
                 Log.d(TAG, "onLocationResult : " + markerSnippet);
 
-                GeoVariable.setAddress(markerTitle);
+                GeoVariableData.setAddress(markerTitle);
                 //현재 위치에 마커 생성하고 이동
                 setCurrentLocation(location, markerTitle, markerSnippet);
 

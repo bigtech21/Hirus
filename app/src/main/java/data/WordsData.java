@@ -2,10 +2,10 @@ package data;
 
 import java.util.Vector;
 
-public class Words {
+public class WordsData {
     public Vector<String> wordsAns = new Vector<String>();
     public Vector<String> wordsAsk = new Vector<String>();
-    public Words(){
+    public WordsData(){
         wordsAsk.add("국내에서 감염병이 의심될 때 \n질병관리청 콜센터를 통해 도움을 \n받을 수 있다.\n" +
                 "이 때 질병관리청 콜센터의 번호는?");
         wordsAns.add("1339");

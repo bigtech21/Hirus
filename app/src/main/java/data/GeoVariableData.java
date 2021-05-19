@@ -2,7 +2,7 @@ package data;
 
 import activity.CurMapActivity;
 
-public class GeoVariable {
+public class GeoVariableData {
     public static double latitude; // static 클래스 변수 위도
 
     public static double longitube; // static 클래스 변수 경도
@@ -23,7 +23,7 @@ public class GeoVariable {
 
     public static void setEcoment(String ecoment) {
 
-        GeoVariable.ecoment = ecoment;
+        GeoVariableData.ecoment = ecoment;
 
     }
 
@@ -43,7 +43,7 @@ public class GeoVariable {
 
     public static void setAirEco(String airEco) {
 
-        GeoVariable.airEco = airEco;
+        GeoVariableData.airEco = airEco;
 
     }
 
@@ -59,7 +59,7 @@ public class GeoVariable {
 
     public static void setMise(String mise) {
 
-        GeoVariable.mise = mise;
+        GeoVariableData.mise = mise;
 
     }
 
@@ -75,7 +75,7 @@ public class GeoVariable {
 
     public static void setChomise(String chomise) {
 
-        GeoVariable.chomise = chomise;
+        GeoVariableData.chomise = chomise;
 
     }
 
@@ -97,7 +97,7 @@ public class GeoVariable {
 
     public static void setSearchedGu(String searchedGu) {
 
-        GeoVariable.searchedGu = searchedGu;
+        GeoVariableData.searchedGu = searchedGu;
 
     }
 
@@ -118,7 +118,7 @@ public class GeoVariable {
     }
 
     public static void setAddress(String string){
-        GeoVariable.address = string;
+        GeoVariableData.address = string;
     }
 
     public static String getAddress(){

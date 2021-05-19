@@ -13,7 +13,7 @@ import android.os.IBinder;
 import androidx.core.content.ContextCompat;
 import android.util.Log;
 
-public class GpsTracker extends Service implements LocationListener {
+public class GpsTrackerService extends Service implements LocationListener {
     private final Context mContext;
     Location location;
     double latitude;
@@ -24,7 +24,7 @@ public class GpsTracker extends Service implements LocationListener {
     protected LocationManager locationManager;
 
 
-    public GpsTracker(Context context) {
+    public GpsTrackerService(Context context) {
         this.mContext = context;
         getLocation();
     }
@@ -145,7 +145,7 @@ public class GpsTracker extends Service implements LocationListener {
     {
         if(locationManager != null)
         {
-            locationManager.removeUpdates(GpsTracker.this);
+            locationManager.removeUpdates(GpsTrackerService.this);
         }
     }
 

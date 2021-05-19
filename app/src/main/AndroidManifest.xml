@@ -22,9 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name="activity.MainActivity"
-
-            ></activity>
+        <activity android:name="activity.MainActivity" />
 
         <receiver
             android:name="receiver.BootReceiver"
@@ -47,7 +45,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCoRExXiGI01yVA4GIPPI0izheWu-umF0s" />
+            android:value="@string/google_api_key" />
 
         <activity
             android:name="activity.CurMapActivity"

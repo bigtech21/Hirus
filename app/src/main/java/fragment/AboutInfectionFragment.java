@@ -12,8 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import Interface.ExcelInterface;
+import Interface.GeoInterface;
 import activity.MainActivity;
-import service.GpsTracker;
+import service.GpsTrackerService;
 import com.kcl.hirus.R;
 
 import java.io.IOException;
@@ -27,11 +29,11 @@ import jxl.Workbook;
 import jxl.read.biff.BiffException;
 
 
-public class AboutInfectionFragment extends Fragment /*implements MainActivity.OnBackpressedListener*/ {
+public class AboutInfectionFragment extends Fragment implements MainActivity.OnBackpressedListener, ExcelInterface, GeoInterface {
 
     private static final String TAG = "DB";
     Geocoder geocoder;
-    GpsTracker gpsTracker;
+    GpsTrackerService gpsTracker;
     Double latitude, longitude;
     String addressArr;
     TextView address;
@@ -74,7 +76,18 @@ public class AboutInfectionFragment extends Fragment /*implements MainActivity.O
 
     }
 
-    public static int selectDesease(String desease) { //AboutInfection 클래스에서 사용
+    @Override
+    public void arrinit() {
+
+    }
+
+    @Override
+    public void getExcelData(String addr, String addr2) {
+
+    }
+
+    @Override
+    public int selectDesease(String desease) { //AboutInfection 클래스에서 사용
         try {
             if(wb != null){
 
@@ -96,6 +109,7 @@ public class AboutInfectionFragment extends Fragment /*implements MainActivity.O
         return 0;
     }
 
+    @Override
     public String copyExcelDataToDatabase(TextView address, String desease) { //AboutInfection 클래스에서 사용
 
         String addresses = null;
@@ -146,6 +160,11 @@ public class AboutInfectionFragment extends Fragment /*implements MainActivity.O
     }
 
     @Override
+    public void getData() {
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_about_infection, container, false);
@@ -163,7 +182,7 @@ public class AboutInfectionFragment extends Fragment /*implements MainActivity.O
         } catch (BiffException e) {
             e.printStackTrace();
         }
-        gpsTracker = new GpsTracker(getContext());
+        gpsTracker = new GpsTrackerService(getContext());
         geocoder = new Geocoder(getContext());
         latitude = gpsTracker.getLatitude();
         longitude = gpsTracker.getLongitude();
@@ -195,8 +214,7 @@ public class AboutInfectionFragment extends Fragment /*implements MainActivity.O
         return rootView;
     }
 
-
-
+    @Override
     public void reverseCoding(){
         List<Address> list = null;
         try {
@@ -217,22 +235,22 @@ public class AboutInfectionFragment extends Fragment /*implements MainActivity.O
         }
     }
 
-   /* @Override
+    @Override
     public void onBack() {
-        Log.e("etc","onBack()");
         MainActivity activity = (MainActivity)getActivity();
-        activity.setOnBackPressedListener(null);
-
-        getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right).remove(this).commit();
-        activity.fragmentOn = false;
-        activity.toolbar_title.setText(activity.addressArr);
+        try {
+            ((MainActivity) getContext()).setOnBackPressedListener(null);
+            activity.tabLayout.getTabAt(0).select();
+            getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+            activity.toolbar_title.setText(activity.addressArr);
+        }
+        catch(Exception e){}
     }
 
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
-        Log.e("etc","onAttach()");
         ((MainActivity)context).setOnBackPressedListener(this);
-    }*/
+    }
 }
 
